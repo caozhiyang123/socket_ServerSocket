@@ -1,4 +1,4 @@
-package com.baifenjy.server;
+package com.baifenjy.base.server;
 
 import java.io.IOException;
 import java.io.InputStream;
