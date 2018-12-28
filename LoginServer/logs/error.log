@@ -1,0 +1,12 @@
+28 十二月 2018 | 15:09:09,438 | ERROR | main | baifenjy.utils.ConfigConnector |     | 
+java.io.FileNotFoundException: config\machines\server.json (系统找不到指定的路径。)
+	at java.io.FileInputStream.open0(Native Method)
+	at java.io.FileInputStream.open(FileInputStream.java:195)
+	at java.io.FileInputStream.<init>(FileInputStream.java:138)
+	at java.io.FileInputStream.<init>(FileInputStream.java:93)
+	at java.io.FileReader.<init>(FileReader.java:58)
+	at com.baifenjy.utils.ConfigConnector.parseToJson(ConfigConnector.java:88)
+	at com.baifenjy.utils.ConfigConnector.init(ConfigConnector.java:77)
+	at com.baifenjy.utils.ConfigConnector.initConfig(ConfigConnector.java:52)
+	at com.baifenjy.controller.ConfigController.<init>(ConfigController.java:10)
+	at com.baifenjy.core.Application.main(Application.java:22)

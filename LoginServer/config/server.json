@@ -1,0 +1,19 @@
+{
+  "database": {
+    "sql": {
+      "url": "jdbc:mysql://127.0.0.1:3306/test?rewriteBatchedStatements=true",
+      "user": "root",
+      "pass": "MyNewPass"
+    },
+    "mongo": {
+      "servers": [
+        {
+          "ip": "127.0.0.1",
+          "port": 27017
+        }
+      ],
+      "numberOfWrites": 1,
+      "connectionsPerHost": 50
+    }
+  }
+}
