@@ -44,8 +44,12 @@ public class Teacher implements Serializable{
     private String teachExperience;
     
     private String createAt;
+
+    private String updateAt;
     
     private String item;
+    
+    private int updated;
     
     public Teacher() {
         super();
@@ -53,7 +57,7 @@ public class Teacher implements Serializable{
     public Teacher( String orderIds,String name, int age, int sex, String email, String phoneNum, String qqNum,
             String weChatNum, String address, String idCard, String college, String profession,
             String otherImports, String certification, String canTeacherGrade, String canTeacherSubject,
-            String canTeacherArea, String teachExperience,String createAt,String item) {
+            String canTeacherArea, String teachExperience,String createAt,String updateAt,String item,int updated) {
         this.orderIds = orderIds;
         this.name = name;
         this.age = age;
@@ -73,7 +77,9 @@ public class Teacher implements Serializable{
         this.canTeacherArea = canTeacherArea;
         this.teachExperience = teachExperience;
         this.createAt = createAt;
+        this.updateAt = updateAt;
         this.item = item;
+        this.updated = updated;
     }
     
     public long getId() {
@@ -203,6 +209,13 @@ public class Teacher implements Serializable{
     {
         this.createAt = createAt;
     }
+    
+    public String getUpdateAt() {
+        return updateAt;
+    }
+    public void setUpdateAt(String updateAt) {
+        this.updateAt = updateAt;
+    }
     public String getItem()
     {
         return item;
@@ -211,6 +224,21 @@ public class Teacher implements Serializable{
     {
         this.item = item;
     }
-    
+    public int getUpdated() {
+        return updated;
+    }
+    public void setUpdated(int updated) {
+        this.updated = updated;
+    }
+    @Override
+    public String toString() {
+        return "姓名:" + name + ", 年龄:" + age + ", 性别:"
+                + sex + ", 邮箱:" + email + ", 电话:" + phoneNum + ", qq:" + qqNum + ", 微信:"
+                + weChatNum + ", 地址:" + address + ", 大学:" + college
+                + ", 专业:" + profession + ", 其他:" + otherImports + ", 证书/资格证:"
+                + certification + ", 教授年级:" + canTeacherGrade + ", 教授科目:"
+                + canTeacherSubject + ", 教授区域:" + canTeacherArea + ", 老师经验:"
+                + teachExperience;
+    }
     
 }

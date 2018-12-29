@@ -16,6 +16,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
@@ -63,24 +64,24 @@ public class OrderDialog extends JDialog
 
     
     public OrderDialog(){
-        setResizable(false);
-        setTitle("¹ÜÀíÏµÍ³_v1.0_ÉÏº£Á¦öª½ÌÓı¿Æ¼¼ÓĞÏŞ¹«Ë¾_[www.baifenjy.com]");
+        setResizable(true);
+        setTitle("ç®¡ç†ç³»ç»Ÿ_v1.0_ä¸Šæµ·åŠ›éœ†æ•™è‚²ç§‘æŠ€æœ‰é™å…¬å¸_[www.baifenjy.com]");
         getContentPane().setLayout(null);
         setBounds(100, 100, 800, 515);
         
-     // ÉèÖÃ´°¿Ú¾ÓÖĞ
+     // è®¾ç½®çª—å£å±…ä¸­
         this.setLocation(Center.getPoint(this.getSize()));
         
         final JPanel commit_panel = new JPanel();
         commit_panel.setLayout(null);
-        commit_panel.setBorder(new TitledBorder(null, "ĞÂÔö¶©µ¥", TitledBorder.DEFAULT_JUSTIFICATION,
+        commit_panel.setBorder(new TitledBorder(null, "æ–°å¢è®¢å•", TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, null, null));
         commit_panel.setBounds(0, 0, 800, 500);
         getContentPane().add(commit_panel);
         
       // --left up
         final JLabel label_create = new JLabel();
-        label_create.setText("´´½¨Ê±¼ä");
+        label_create.setText("åˆ›å»ºæ—¶é—´");
         label_create.setBounds(76, 50, 66, 18);
         commit_panel.add(label_create);
         
@@ -90,7 +91,7 @@ public class OrderDialog extends JDialog
         commit_panel.add(create_Field);
         
         final JLabel label_order = new JLabel();
-        label_order.setText("¶©µ¥ºÅ");
+        label_order.setText("è®¢å•å·");
         label_order.setBounds(76, 100, 66, 18);
         commit_panel.add(label_order);
         
@@ -99,7 +100,7 @@ public class OrderDialog extends JDialog
         commit_panel.add(order_Field);
         
         final JLabel label_name = new JLabel();
-        label_name.setText("Ñ§ÉúĞÕÃû");
+        label_name.setText("å­¦ç”Ÿå§“å");
         label_name.setBounds(76, 150, 66, 18);
         commit_panel.add(label_name);
         
@@ -108,7 +109,7 @@ public class OrderDialog extends JDialog
         commit_panel.add(name_Field);
         
         final JLabel label_age = new JLabel();
-        label_age.setText("Ñ§ÉúÄêÁä");
+        label_age.setText("å­¦ç”Ÿå¹´é¾„");
         label_age.setBounds(76, 200, 66, 18);
         commit_panel.add(label_age);
         
@@ -117,7 +118,7 @@ public class OrderDialog extends JDialog
         commit_panel.add(ageField);
         
         final JLabel label_sex = new JLabel();
-        label_sex.setText("Ñ§ÉúĞÔ±ğ");
+        label_sex.setText("å­¦ç”Ÿæ€§åˆ«");
         label_sex.setBounds(76, 250, 66, 18);
         commit_panel.add(label_sex);
         
@@ -126,7 +127,7 @@ public class OrderDialog extends JDialog
         commit_panel.add(sexField);
         
         final JLabel label_grade = new JLabel();
-        label_grade.setText("Ñ§ÉúÄê¼¶");
+        label_grade.setText("å­¦ç”Ÿå¹´çº§");
         label_grade.setBounds(76, 300, 66, 18);
         commit_panel.add(label_grade);
         
@@ -135,7 +136,7 @@ public class OrderDialog extends JDialog
         commit_panel.add(gradeField);
         
         final JLabel phoneNum_label = new JLabel();
-        phoneNum_label.setText("µç»°");
+        phoneNum_label.setText("ç”µè¯");
         phoneNum_label.setBounds(76, 350, 66, 18);
         commit_panel.add(phoneNum_label);
         
@@ -144,7 +145,7 @@ public class OrderDialog extends JDialog
         commit_panel.add(phone_field);
         
         final JLabel label_resource = new JLabel();
-        label_resource.setText("ÇşµÀ");
+        label_resource.setText("æ¸ é“");
         label_resource.setBounds(76, 400, 66, 18);
         commit_panel.add(label_resource);
         
@@ -154,7 +155,7 @@ public class OrderDialog extends JDialog
         
         // -- right up  ~ 72
         final JLabel label_update = new JLabel();
-        label_update.setText("¸üĞÂÊ±¼ä");
+        label_update.setText("æ›´æ–°æ—¶é—´");
         label_update.setBounds(352, 50, 66, 18);
         commit_panel.add(label_update);
         
@@ -164,7 +165,7 @@ public class OrderDialog extends JDialog
         commit_panel.add(update_Field);
         
         final JLabel label_subject = new JLabel();
-        label_subject.setText("¿ÆÄ¿");
+        label_subject.setText("ç§‘ç›®");
         label_subject.setBounds(352, 100, 66, 18);
         commit_panel.add(label_subject);
         
@@ -173,7 +174,7 @@ public class OrderDialog extends JDialog
         commit_panel.add(subject_Field);
         
         final JLabel label_address = new JLabel();
-        label_address.setText("¼ÒÍ¥µØÖ·");
+        label_address.setText("å®¶åº­åœ°å€");
         label_address.setBounds(352, 150, 66, 18);
         commit_panel.add(label_address);
         
@@ -182,7 +183,7 @@ public class OrderDialog extends JDialog
         commit_panel.add(address_Field);
         
         final JLabel label_time = new JLabel();
-        label_time.setText("Ê±¼äÒªÇó");
+        label_time.setText("æ—¶é—´è¦æ±‚");
         label_time.setBounds(352, 200, 66, 18);
         commit_panel.add(label_time);
         
@@ -191,7 +192,7 @@ public class OrderDialog extends JDialog
         commit_panel.add(time_Field);
         
         final JLabel label_cost = new JLabel();
-        label_cost.setText("¼Û¸ñÒªÇó");
+        label_cost.setText("ä»·æ ¼è¦æ±‚");
         label_cost.setBounds(352, 250, 66, 18);
         commit_panel.add(label_cost);
         
@@ -200,7 +201,7 @@ public class OrderDialog extends JDialog
         commit_panel.add(costField);
         
         final JLabel label_parentsName = new JLabel();
-        label_parentsName.setText("¼Ò³¤³Æºô");
+        label_parentsName.setText("å®¶é•¿ç§°å‘¼");
         label_parentsName.setBounds(352, 300, 66, 18);
         commit_panel.add(label_parentsName);
         
@@ -219,7 +220,7 @@ public class OrderDialog extends JDialog
         
 
         final JLabel label_weChatNum = new JLabel();
-        label_weChatNum.setText("Î¢ĞÅ");
+        label_weChatNum.setText("å¾®ä¿¡");
         label_weChatNum.setBounds(352, 400, 66, 18);
         commit_panel.add(label_weChatNum);
         
@@ -243,7 +244,7 @@ public class OrderDialog extends JDialog
         
         
         final JButton teacher_button = new JButton();
-        teacher_button.setText("ÉÏÃÅÀÏÊ¦");
+        teacher_button.setText("ä¸Šé—¨è€å¸ˆ");
         teacher_button.setBounds(248, 440, 91, 40);
         commit_panel.add(teacher_button);
         
@@ -269,7 +270,7 @@ public class OrderDialog extends JDialog
             JTextField qq_Field, JTextField weChatNum_Field)
     {
         final JButton empty_button = new JButton();
-        empty_button.setText("Çå¿Õ");
+        empty_button.setText("æ¸…ç©º");
         empty_button.setBounds(532, 440, 91, 40);
         commit_panel.add(empty_button);
         
@@ -305,7 +306,7 @@ public class OrderDialog extends JDialog
             final JTextField qq_Field, final JTextField weChatNum_Field)
     {
         final JButton query_button = new JButton();
-        query_button.setText("¶©µ¥²éÑ¯");
+        query_button.setText("è®¢å•æŸ¥è¯¢");
         query_button.setBounds(432, 440, 91, 40);
         commit_panel.add(query_button);
         
@@ -374,7 +375,7 @@ public class OrderDialog extends JDialog
     {
         // --
         final JButton commit_button = new JButton();
-        commit_button.setText("±£´æ/ĞŞ¸Ä");
+        commit_button.setText("ä¿å­˜/ä¿®æ”¹");
         commit_button.setBounds(148, 440, 91, 40);
         commit_panel.add(commit_button);
         
@@ -400,25 +401,25 @@ public class OrderDialog extends JDialog
                 
                 boolean flag = false;
                 if(orderId.trim().equals("")){
-                    javax.swing.JOptionPane.showMessageDialog(OrderDialog.this, "¶©µ¥ºÅ±ØĞëÌîĞ´...");
+                    javax.swing.JOptionPane.showMessageDialog(OrderDialog.this, "è®¢å•å·å¿…é¡»å¡«å†™...");
                     flag = true;
                     return;
                 }
 
                 if(flag == false && phoneNum.trim().equals("")){
-                    javax.swing.JOptionPane.showMessageDialog(OrderDialog.this, "ÊÖ»úºÅ±ØĞëÌîĞ´...");
+                    javax.swing.JOptionPane.showMessageDialog(OrderDialog.this, "æ‰‹æœºå·å¿…é¡»å¡«å†™...");
                     flag = true;
                     return;
                 }
 
                 if( flag == false && studentGrade.trim().equals("")){
-                    javax.swing.JOptionPane.showMessageDialog(OrderDialog.this, "Ñ§ÉúÄê¼¶±ØĞëÌîĞ´...");
+                    javax.swing.JOptionPane.showMessageDialog(OrderDialog.this, "å­¦ç”Ÿå¹´çº§å¿…é¡»å¡«å†™...");
                     flag = true;
                     return;
                 }
 
                 if(flag == false && studentSubject.trim().equals("")){
-                    javax.swing.JOptionPane.showMessageDialog(OrderDialog.this, "Ñ§Éú¸¨µ¼¿ÆÄ¿±ØĞëÌîĞ´...");
+                    javax.swing.JOptionPane.showMessageDialog(OrderDialog.this, "å­¦ç”Ÿè¾…å¯¼ç§‘ç›®å¿…é¡»å¡«å†™...");
                     flag = true;
                     return;
                 }
@@ -446,7 +447,7 @@ public class OrderDialog extends JDialog
                             dos.writeUTF(messageResource);
                             res = dis.readUTF();
                             if(Response.SUCCESS.equals(res)){
-                                javax.swing.JOptionPane.showMessageDialog(OrderDialog.this, "Ìá½»³É¹¦");
+                                javax.swing.JOptionPane.showMessageDialog(OrderDialog.this, "æäº¤æˆåŠŸ");
                                 
                                 order_Field.setText("");
                                 name_Field.setText("");
@@ -463,7 +464,7 @@ public class OrderDialog extends JDialog
                                 phone_field.setText("");
                                 resource_Field.setText("");
                             }else{
-                                javax.swing.JOptionPane.showMessageDialog(OrderDialog.this, "Ìá½»Ê§°Ü");
+                                javax.swing.JOptionPane.showMessageDialog(OrderDialog.this, "æäº¤å¤±è´¥");
                             }
                         }
                     } catch (IOException e1)
@@ -472,7 +473,7 @@ public class OrderDialog extends JDialog
                     }
                     
                 }else if(flag == false && time.trim().equals("")){
-                    javax.swing.JOptionPane.showMessageDialog(OrderDialog.this, "Ê±¼äÒªÇó±ØĞëÌîĞ´...");
+                    javax.swing.JOptionPane.showMessageDialog(OrderDialog.this, "æ—¶é—´è¦æ±‚å¿…é¡»å¡«å†™...");
                     return;
                 }
             
@@ -485,13 +486,13 @@ public class OrderDialog extends JDialog
     public void connect() {
         try {
             s = new Socket(IP, PORT);
-            System.out.println("Ò»¸ö¿Í»§¶ËµÇÂ½ÖĞ....!");
+            System.out.println("ä¸€ä¸ªå®¢æˆ·ç«¯ç™»é™†ä¸­....!");
             dos = new DataOutputStream(s.getOutputStream());
             dis = new DataInputStream(s.getInputStream());
 
         } catch (ConnectException e) {
-            System.out.println("·şÎñ¶ËÒì³£.........");
-            System.out.println("ÇëÈ·ÈÏ·şÎñ¶ËÊÇ·ñ¿ªÆô.........");
+            System.out.println("æœåŠ¡ç«¯å¼‚å¸¸.........");
+            System.out.println("è¯·ç¡®è®¤æœåŠ¡ç«¯æ˜¯å¦å¼€å¯.........");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -520,7 +521,7 @@ public class OrderDialog extends JDialog
                 }else{
                     OrderDialog.this.setSize(800, 515);
                 }
-                // ÉèÖÃ´°¿Ú²»¶Ï¾ÓÖĞ
+                // è®¾ç½®çª—å£ä¸æ–­å±…ä¸­
                 OrderDialog.this.setLocation(Center.getPoint(OrderDialog.this.getSize()));
             }
         });
@@ -531,14 +532,14 @@ public class OrderDialog extends JDialog
     {
         final JPanel query_panel = new JPanel();
         query_panel.setLayout(null);
-        query_panel.setBorder(new TitledBorder(null, "ÉÏÃÅÀÏÊ¦", TitledBorder.DEFAULT_JUSTIFICATION,
+        query_panel.setBorder(new TitledBorder(null, "ä¸Šé—¨è€å¸ˆ", TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, null, null));
         query_panel.setBounds(0, 500, 800, 475);
         getContentPane().add(query_panel);
         
         // -- left
         final JLabel label_orderId = new JLabel();
-        label_orderId.setText("¶©µ¥ºÅ£º");
+        label_orderId.setText("è®¢å•å·ï¼š");
         label_orderId.setBounds(10, 40, 66, 18);
         query_panel.add(label_orderId);
         
@@ -547,7 +548,7 @@ public class OrderDialog extends JDialog
         query_panel.add(field_orderId);
         
         final JLabel label_tec_name = new JLabel();
-        label_tec_name.setText("ÀÏÊ¦ĞÕÃû£º");
+        label_tec_name.setText("è€å¸ˆå§“åï¼š");
         label_tec_name.setBounds(10, 90, 66, 18);
         query_panel.add(label_tec_name);
         
@@ -556,7 +557,7 @@ public class OrderDialog extends JDialog
         query_panel.add(field_tec_name);
         
         final JLabel label_tec_phone = new JLabel();
-        label_tec_phone.setText("ÀÏÊ¦µç»°£º");
+        label_tec_phone.setText("è€å¸ˆç”µè¯ï¼š");
         label_tec_phone.setBounds(10, 140, 66, 18);
         query_panel.add(label_tec_phone);
         
@@ -565,7 +566,7 @@ public class OrderDialog extends JDialog
         query_panel.add(field_tec_phone);
         
         final JLabel label_tec_qq = new JLabel();
-        label_tec_qq.setText("ÀÏÊ¦ QQ£º");
+        label_tec_qq.setText("è€å¸ˆ QQï¼š");
         label_tec_qq.setBounds(10, 190, 66, 18);
         query_panel.add(label_tec_qq);
         
@@ -574,7 +575,7 @@ public class OrderDialog extends JDialog
         query_panel.add(field_tec_qq);
         
         final JLabel label_tec_weChat = new JLabel();
-        label_tec_weChat.setText("ÀÏÊ¦Î¢ĞÅ£º");
+        label_tec_weChat.setText("è€å¸ˆå¾®ä¿¡ï¼š");
         label_tec_weChat.setBounds(10, 240, 66, 18);
         query_panel.add(label_tec_weChat);
         
@@ -584,7 +585,7 @@ public class OrderDialog extends JDialog
         
         // -- right
         final JLabel label_teacher = new JLabel();
-        label_teacher.setText("ÀÏÊ¦ÏêÇé£º");
+        label_teacher.setText("è€å¸ˆè¯¦æƒ…ï¼š");
         label_teacher.setBounds(366, 40, 66, 18);
         query_panel.add(label_teacher);
         
@@ -593,9 +594,8 @@ public class OrderDialog extends JDialog
         query_panel.add(field_tec_item);
         
         final JButton query_button = new JButton();
-        query_button.setText("±£´æ/ĞŞ¸Ä");
+        query_button.setText("ä¿å­˜/ä¿®æ”¹");
         query_button.setBounds(148, 440, 91, 40);
-        query_button.add(query_button);
         query_panel.add(query_button);
         query_button.addActionListener(new ActionListener()
         {
@@ -622,7 +622,7 @@ public class OrderDialog extends JDialog
                         dos.writeUTF(tec_item);
                         res = dis.readUTF();
                         if(Response.SUCCESS.equals(res)){
-                            javax.swing.JOptionPane.showMessageDialog(OrderDialog.this, "Ìá½»³É¹¦");
+                            javax.swing.JOptionPane.showMessageDialog(OrderDialog.this, "æäº¤æˆåŠŸ");
                             field_orderId.setText("");
                             field_tec_name.setText("");
                             label_tec_phone.setText("");
@@ -630,7 +630,7 @@ public class OrderDialog extends JDialog
                             field_tec_weChat.setText("");
                             field_tec_item.setText("");
                         }else{
-                            javax.swing.JOptionPane.showMessageDialog(OrderDialog.this, "Ìá½»Ê§°Ü");
+                            javax.swing.JOptionPane.showMessageDialog(OrderDialog.this, "æäº¤å¤±è´¥");
                         }
                     }
                     

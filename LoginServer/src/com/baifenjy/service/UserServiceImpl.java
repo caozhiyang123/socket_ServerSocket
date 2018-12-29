@@ -6,11 +6,7 @@ import com.baifenjy.vo.User;
 
 public class UserServiceImpl implements UserService
 {
-    private static UserDao userDao;
-    
-    static{
-        userDao = DaoFactory.getUserDao();
-    }
+    private static UserDao userDao = DaoFactory.getUserDao();
 
     @Override
     public boolean login(User user){

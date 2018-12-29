@@ -4,17 +4,15 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
-import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.List;
 
+import com.alibaba.fastjson.JSON;
 import com.baifenjy.io.Request;
 import com.baifenjy.io.Response;
-import com.baifenjy.server.OrderServer.Client;
-import com.baifenjy.service.OrderServiceImpl;
 import com.baifenjy.service.TeacherServiceImpl;
-import com.baifenjy.vo.Order;
 import com.baifenjy.vo.Teacher;
 
 public class TeacherServer
@@ -83,21 +81,10 @@ public class TeacherServer
                     request = dis.readUTF();
                     response = request;
                     dos.writeUTF(response);
-                    if (request.equals(Request.COMMIT_ORDER)) {
+                    if (request.equals(Request.COMMIT_TEC)) {
                         
-                        String orderIds = dis.readUTF();
-                        String name = dis.readUTF();
-                        String phoneNum = dis.readUTF();
-                        String qqNum = dis.readUTF();
-                        String weChatNum = dis.readUTF();
-                        String item = dis.readUTF();
-
-                        Teacher teacher = new Teacher();
-                        teacher.setName(name);
-                        teacher.setPhoneNum(phoneNum);
-                        teacher.setQqNum(qqNum);
-                        teacher.setWeChatNum(weChatNum);
-                        teacher.setItem(item);
+                        String teacherStr = dis.readUTF();
+                        Teacher teacher = (Teacher) JSON.parse(teacherStr);
 
                         boolean saveFlag = teacherService.saveOrUpdate(teacher);
                         if (saveFlag) {
@@ -106,14 +93,20 @@ public class TeacherServer
                             dos.writeUTF(Response.FAIL);
                         }
 
-                    } else if (request.equals(Request.QUERY_ORDER)) {
+                    } else if (request.equals(Request.QUERY_TEC_BY_ORDERID)) {
                         String orderId = dis.readUTF();
-                        Teacher teacher = teacherService.queryByName(orderId);
-                        //TODO
+                        List<Teacher> tecs = teacherService.queryByOrderId(orderId);
+                        String tecsString = JSON.toJSONString(tecs);
+                        dos.writeUTF(tecsString);
+                    } else if(request.equals(Request.QUERY_TEC_BY_TEACHER_PHONE)){
+                        String phone = dis.readUTF();
+                        Teacher teacher = teacherService.queryByPhone(phone);
+                        String teacherStr = JSON.toJSONString(teacher);
+                        dos.writeUTF(teacherStr);
                     }
                 }
             } catch (SocketException e) {
-                System.out.println("Ò»¸öµÇÂ½´°ÒÑ¾­¹Ø±Õ....");
+                System.out.println("Ò»ï¿½ï¿½ï¿½ï¿½Â½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½Ø±ï¿½....");
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {

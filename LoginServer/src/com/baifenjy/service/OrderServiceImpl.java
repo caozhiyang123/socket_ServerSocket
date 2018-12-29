@@ -9,10 +9,7 @@ import com.baifenjy.vo.Order;
 
 public class OrderServiceImpl implements OrderService
 {
-    private static OrderDao orderDao;
-    static{
-        orderDao = new OrderDao();
-    }
+    private static OrderDao orderDao = new OrderDao();
     
     @Override
     public boolean saveOrUpdate(Order order){

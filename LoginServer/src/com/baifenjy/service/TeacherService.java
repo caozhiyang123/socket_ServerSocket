@@ -1,5 +1,7 @@
 package com.baifenjy.service;
 
+import java.util.List;
+
 import com.baifenjy.vo.Teacher;
 
 public interface TeacherService
@@ -10,12 +12,8 @@ public interface TeacherService
 
     boolean update(Teacher teacher);
 
-    Teacher queryByName(String name);
-
     Teacher queryByPhone(String phone);
 
-    Teacher queryByQq(String qq);
-
-    Teacher queryByWeChat(String weChat);
+    List<Teacher> queryByOrderId(String orderId);
 
 }
