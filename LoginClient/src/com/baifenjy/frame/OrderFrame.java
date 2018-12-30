@@ -1,8 +1,6 @@
 package com.baifenjy.frame;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
-import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -12,22 +10,27 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baifenjy.io.Request;
 import com.baifenjy.io.Response;
 import com.baifenjy.utils.Center;
+import com.baifenjy.vo.Teacher;
+import com.mysql.jdbc.StringUtils;
 
 public class OrderFrame extends JFrame {
 
@@ -77,7 +80,7 @@ public class OrderFrame extends JFrame {
         commit_panel.setLayout(null);
         commit_panel.setBorder(new TitledBorder(null, "新增订单", TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, null, null));
-        commit_panel.setBounds(0, 0, 700, 500);
+        commit_panel.setBounds(0, 0, 660, 500);
         commit_panel.setVisible(true);
         getContentPane().add(commit_panel);
 
@@ -431,7 +434,7 @@ public class OrderFrame extends JFrame {
                     try
                     {
                         dos.writeUTF(Request.COMMIT_ORDER);
-                        res = dis.readUTF();
+                        String res = dis.readUTF();
                         if (Request.COMMIT_ORDER.equals(res)) {
                             dos.writeUTF(orderId);
                             dos.writeUTF(studentName);
@@ -536,18 +539,18 @@ public class OrderFrame extends JFrame {
         query_panel.setLayout(null);
         query_panel.setBorder(new TitledBorder(null, "上门老师", TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, null, null));
-        query_panel.setBounds(710, 0, 700, 500);
+        query_panel.setBounds(670, 0, 689, 500);
         getContentPane().add(query_panel);
         
         // -- left
-        final JLabel label_orderId = new JLabel();
-        label_orderId.setText("订单号：");
-        label_orderId.setBounds(10, 40, 66, 18);
-        query_panel.add(label_orderId);
+        final JLabel label_updated = new JLabel();
+        label_updated.setText("更新次数：");
+        label_updated.setBounds(10, 40, 66, 18);
+        query_panel.add(label_updated);
         
-        final JTextArea field_orderId = new JTextArea();
-        field_orderId.setBounds(66, 30, 150, 40);
-        query_panel.add(field_orderId);
+        final JTextArea field_updated = new JTextArea();
+        field_updated.setBounds(66, 30, 150, 40);
+        query_panel.add(field_updated);
         
         final JLabel label_tec_name = new JLabel();
         label_tec_name.setText("老师姓名：");
@@ -611,6 +614,16 @@ public class OrderFrame extends JFrame {
         final JTextArea field_tec_email = new JTextArea();
         field_tec_email.setBounds(66, 380, 150, 40);
         query_panel.add(field_tec_email);
+        
+        final JLabel label_tec_id = new JLabel();
+        label_tec_id.setText("ID：");
+        label_tec_id.setBounds(10, 440, 66, 18);
+        query_panel.add(label_tec_id);
+        
+        final JTextArea field_tec_id = new JTextArea();
+        field_tec_id.setBounds(66, 430, 150, 40);
+        field_tec_id.setEnabled(false);
+        query_panel.add(field_tec_id);
         
         //--right
 
@@ -742,13 +755,14 @@ public class OrderFrame extends JFrame {
         
         final JTextArea field_tec_orderIds  = new JTextArea();
         field_tec_orderIds.setBounds(508, 380, 150, 40);
+        field_tec_orderIds.setEnabled(false);
         query_panel.add(field_tec_orderIds);
         
-        final JButton query_button = new JButton();
-        query_button.setText("保存/修改");
-        query_button.setBounds(148, 440, 91, 40);
-        query_panel.add(query_button);
-        query_button.addActionListener(new ActionListener()
+        final JButton save_button = new JButton();
+        save_button.setText("保存/修改");
+        save_button.setBounds(292, 440, 91, 40);
+        query_panel.add(save_button);
+        save_button.addActionListener(new ActionListener()
         {
             @Override
             public void actionPerformed(ActionEvent e)
@@ -757,34 +771,73 @@ public class OrderFrame extends JFrame {
                 String tec_age = field_tec_age.getText();
                 String tec_sex = field_tec_sex.getText();
                 String tec_email = field_tec_email.getText();
-                String tec_phone = label_tec_phone.getText();
+                String tec_phone = field_tec_phone.getText();
                 String tec_qq = field_tec_qq.getText();
                 String tec_wechat = field_tec_weChat.getText();
                 String tec_address = field_tec_address.getText();
                 String tec_idCard = field_tec_idCard.getText();
                 String tec_college = field_tec_college.getText();
                 String tec_profession = field_tec_profession.getText();
+                String tec_otherImports = field_tec_otherImports.getText();
+                String tec_certification = field_tec_certification.getText();
+                String tec_canTeacherGrade = field_tec_canTeacherGrade.getText();
+                String tec_canTeacherSubject = field_tec_canTeacherSubject.getText();
+                String tec_canTeacherArea = field_tec_canTeacherArea.getText();
+                String tec_teachExperience = field_tec_teachExperience.getText();
+//                String tec_id = field_tec_id.getText();
                 
-                String json = "{"+"name:"+tec_name+",age:"+tec_age+",sex:"+tec_sex+",email:"+tec_email
-                        +",phoneNum:"+tec_phone+",qqNum:"+tec_qq+",weChatNum:"+tec_wechat+",address:"
-                        +field_tec_address+"}";
+                Teacher teacher = new Teacher();
+                teacher.setName(tec_name.trim());
+                teacher.setAge(StringUtils.isNullOrEmpty(tec_age.trim())?0:Integer.parseInt(tec_age.trim()));
+                teacher.setSex(StringUtils.isNullOrEmpty(tec_sex.trim())?3:("男".equals(tec_sex.trim())?1:("女".equals(tec_sex.trim())?2:3)));
+                teacher.setEmail(tec_email.trim());
+                teacher.setPhoneNum(tec_phone.trim());
+                teacher.setQqNum(tec_qq.trim());
+                teacher.setWeChatNum(tec_wechat.trim());
+                teacher.setAddress(tec_address.trim());
+                teacher.setIdCard(tec_idCard.trim());
+                teacher.setCollege(tec_college.trim());
+                teacher.setProfession(tec_profession.trim());
+                teacher.setOtherImports(tec_otherImports.trim());
+                teacher.setCertification(tec_certification.trim());
+                teacher.setCanTeacherGrade(tec_canTeacherGrade.trim());
+                teacher.setCanTeacherSubject(tec_canTeacherSubject.trim());
+                teacher.setCanTeacherArea(tec_canTeacherArea.trim());
+                teacher.setTeachExperience(tec_teachExperience.trim());
+//                teacher.setId(Long.parseLong(tec_id));
+                
+                String teacherJson = JSON.toJSONString(teacher);
+                
                 try
                 {
                     dos.writeUTF(Request.COMMIT_TEC);
-                    res = dis.readUTF();
+                    String res = dis.readUTF();
                     if(Request.COMMIT_TEC.equals(res)){
-                        dos.writeUTF(tec_name);
-                        dos.writeUTF(tec_phone);
-                        dos.writeUTF(tec_qq);
-                        dos.writeUTF(tec_wechat);
+                        dos.writeUTF(teacherJson);
                         res = dis.readUTF();
                         if(Response.SUCCESS.equals(res)){
                             javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "提交成功");
-                            field_orderId.setText("");
+                            field_updated.setText("");
                             field_tec_name.setText("");
-                            label_tec_phone.setText("");
+                            field_tec_age.setText("");
+                            field_tec_sex.setText("");
+                            field_tec_email.setText("");
+                            field_tec_phone.setText("");
                             field_tec_qq.setText("");
                             field_tec_weChat.setText("");
+                            field_tec_address.setText("");
+                            field_tec_idCard.setText("");
+                            field_tec_college.setText("");
+                            field_tec_profession.setText("");
+                            field_tec_otherImports.setText("");
+                            field_tec_certification.setText("");
+                            field_tec_canTeacherGrade.setText("");
+                            field_tec_canTeacherSubject.setText("");
+                            field_tec_canTeacherArea.setText("");
+                            field_tec_teachExperience.setText("");
+                            field_tec_createAt.setText("");
+                            field_tec_updateAt.setText("");
+                            field_tec_orderIds.setText("");
                             field_tec_item.setText("");
                         }else{
                             javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "提交失败");
@@ -798,8 +851,132 @@ public class OrderFrame extends JFrame {
             }
         });
         
-        //TODO
+        
+        final JButton orderId_button = new JButton();
+        orderId_button.setText("电话查询");
+        orderId_button.setBounds(393, 440, 91, 40);
+        query_panel.add(orderId_button);
+        orderId_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String tec_phone = field_tec_phone.getText();
+                try {
+                    dos.writeUTF(Request.QUERY_TEC_BY_TEACHER_PHONE);
+                    String res = dis.readUTF();
+                    if(Request.QUERY_TEC_BY_TEACHER_PHONE.equals(res)){
+                        dos.writeUTF(tec_phone);
+                        String teacherStr = dis.readUTF();
+                        JSONObject json = (JSONObject) JSON.parse(teacherStr);
+                        
+                        Teacher teacher = initTeacher(json);
+                        
+                        
+                        field_tec_id.setText(teacher.getId()+"");
+                        field_tec_name.setText(teacher.getName());
+                        field_tec_age.setText(teacher.getAge()+"");
+                        field_tec_sex.setText(teacher.getSex()+"");
+                        field_tec_email.setText(teacher.getEmail());
+                        field_tec_phone.setText(teacher.getPhoneNum());
+                        field_tec_qq.setText(teacher.getQqNum());
+                        field_tec_weChat.setText(teacher.getWeChatNum());
+                        field_tec_address.setText(teacher.getAddress());
+                        field_tec_idCard.setText(teacher.getIdCard());
+                        field_tec_college.setText(teacher.getCollege());
+                        field_tec_profession.setText(teacher.getProfession());
+                        field_tec_otherImports.setText(teacher.getOtherImports());
+                        field_tec_certification.setText(teacher.getCertification());
+                        field_tec_canTeacherGrade.setText(teacher.getCanTeacherGrade());
+                        field_tec_canTeacherSubject.setText(teacher.getCanTeacherSubject());
+                        field_tec_canTeacherArea.setText(teacher.getCanTeacherArea());
+                        field_tec_teachExperience.setText(teacher.getTeachExperience());
+                        field_tec_createAt.setText(teacher.getCreateAt());
+                        field_tec_updateAt.setText(teacher.getUpdateAt());
+                        field_tec_item.setText(teacher.getItem());
+                        field_tec_orderIds.setText(teacher.getOrderIds());
+                        field_updated.setText(teacher.getUpdated()+"");
+                    }
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+
+            
+        });
+
+        
+        final JPanel query_tec_panel = new JPanel();
+        query_tec_panel.setLayout(null);
+        query_tec_panel.setBorder(new TitledBorder(null, "相关老师", TitledBorder.DEFAULT_JUSTIFICATION,
+                TitledBorder.DEFAULT_POSITION, null, null));
+        query_tec_panel.setBounds(0, 500, 1360, 200);
+        getContentPane().add(query_tec_panel);
+        
+        JTextArea teaArea = new JTextArea();
+        teaArea.setSize(1360, 200);
+        teaArea.setEnabled(false);
+        query_tec_panel.add(teaArea);
+
+        JTextField field_orderId = new JTextField();
+        field_orderId.setBounds(494, 440, 91, 40);
+        query_panel.add(field_orderId);
+        
+        final JButton phone_button = new JButton();
+        phone_button.setText("订单号查询");
+        phone_button.setBounds(585, 440, 91, 40);
+        query_panel.add(phone_button);
+        phone_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String tec_orderId = field_orderId.getText();
+                try {
+                    dos.writeUTF(Request.QUERY_TEC_BY_ORDERID);
+                    String res = dis.readUTF();
+                    if(Request.QUERY_TEC_BY_ORDERID.equals(res)){
+                        dos.writeUTF(tec_orderId);
+                        String teachers = dis.readUTF();
+                        JSONArray  jsonArr  = (JSONArray) JSON.parse(teachers);
+                        StringBuffer sb = new StringBuffer();
+                        for (Object obj : jsonArr) {
+                            JSONObject jsonObj = (JSONObject)obj;
+                            Teacher tea = initTeacher(jsonObj);
+                            sb.append(tea.toString()+"/r/n");
+                        }
+                        teaArea.setText(sb.toString());
+                    }
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+        
     }
-    
+
+    private Teacher initTeacher(JSONObject json) {
+        Teacher teacher = new Teacher();
+        teacher.setId(json.getLong("id"));
+        teacher.setName(json.getString("name"));
+        teacher.setAge(Integer.parseInt(json.getString("age")));
+        teacher.setSex(Integer.parseInt(json.getString("sex")));
+        teacher.setEmail(json.getString("email"));
+        teacher.setPhoneNum(json.getString("phoneNum"));
+        teacher.setQqNum(json.getString("qqNum"));
+        teacher.setWeChatNum(json.getString("weChatNum"));
+        teacher.setAddress(json.getString("address"));
+        teacher.setIdCard(json.getString("idCard"));
+        teacher.setCollege(json.getString("college"));
+        teacher.setProfession(json.getString("profession"));
+        teacher.setOtherImports(json.getString("otherImports"));
+        teacher.setCertification(json.getString("certification"));
+        teacher.setCanTeacherGrade(json.getString("canTeacherGrade"));
+        teacher.setCanTeacherSubject(json.getString("canTeacherSubject"));
+        teacher.setCanTeacherArea(json.getString("canTeacherArea"));
+        teacher.setTeachExperience(json.getString("teachExperience"));
+        teacher.setCreateAt(json.getString("createAt"));
+        teacher.setUpdateAt(json.getString("updateAt"));
+        teacher.setItem(json.getString("item"));
+        teacher.setOrderIds(json.getString("orderIds"));
+        teacher.setUpdated(json.getIntValue("updated"));
+        return teacher;
+    }
 
 }

@@ -5,12 +5,14 @@ import org.apache.log4j.PropertyConfigurator;
 import com.baifenjy.controller.ConfigController;
 import com.baifenjy.server.LoginServer;
 import com.baifenjy.server.OrderServer;
+import com.baifenjy.server.TeacherServer;
 
 public class Application
 {
     private static ConfigController configController;
     private static LoginServer loginServer;
     private static OrderServer orderServer;
+    private static TeacherServer teacherServer;
     
     public static final String CONFIG_DIR = "config/";
     
@@ -21,6 +23,7 @@ public class Application
         
         configController = new ConfigController();
 //        loginServer = new LoginServer();
-        orderServer = new OrderServer();
+//        orderServer = new OrderServer();
+        teacherServer = new TeacherServer();
     }
 }

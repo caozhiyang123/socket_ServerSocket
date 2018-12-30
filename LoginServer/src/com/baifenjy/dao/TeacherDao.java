@@ -167,7 +167,7 @@ public class TeacherDao {
         try {
             conn = DBConnector.getInstance().getConnection();
             String sql = String.format("update %s set %s=?,%s=?,%s=?,%s=?,%s=?,%s=?,%s=?,"
-                    + ",%s=?,%s=?,%s=?,%s=?,%s=?,%s=?,%s=?,%s=?,%s=?,%s=?,%s=?,%s=?",
+                    + "%s=?,%s=?,%s=?,%s=?,%s=?,%s=?,%s=?,%s=?,%s=?,%s=?,%s=?,%s=?",
                     TABLENAME,NAME,AGE,SEX,ADDRESS,CAN_TEACHER_AREA,CAN_TEACHER_GRADE,CAN_TEACHER_SUBJECT
                     ,CERTIFICATION,COLLEGE,EMAIL,ID_CARD,PHONE_NUM,QQ_NUM,WE_CHAT_NUM,PROFESSION,TEACH_EXPERIENCE
                     ,OTHER_IMPORTS,UPDATE_AT,UPDATED);

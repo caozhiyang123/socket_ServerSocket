@@ -22,7 +22,7 @@ public class TeacherServiceImpl implements TeacherService
         if(StringUtils.isNullOrEmpty(teacher.getPhoneNum())){
             return false;
         }
-        Teacher teacherOld = queryByPhone(teacher.getPhoneNum());
+        Teacher teacherOld = teacherDao.queryByPhone(teacher.getPhoneNum());
         if(teacherOld == null){
             String time = ThreadLocalSimple.df.get().format(new Date());
             teacher.setCreateAt(time);

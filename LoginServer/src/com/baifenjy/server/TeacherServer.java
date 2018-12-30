@@ -10,10 +10,12 @@ import java.net.SocketException;
 import java.util.List;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baifenjy.io.Request;
 import com.baifenjy.io.Response;
 import com.baifenjy.service.TeacherServiceImpl;
 import com.baifenjy.vo.Teacher;
+import com.mysql.jdbc.StringUtils;
 
 public class TeacherServer
 {
@@ -78,14 +80,33 @@ public class TeacherServer
         {
             try {
                 while (connected) {
-                    request = dis.readUTF();
-                    response = request;
+                    String request = dis.readUTF();
+                    String response = request;
                     dos.writeUTF(response);
                     if (request.equals(Request.COMMIT_TEC)) {
                         
                         String teacherStr = dis.readUTF();
-                        Teacher teacher = (Teacher) JSON.parse(teacherStr);
-
+                        JSONObject json = (JSONObject) JSON.parse(teacherStr);
+                        Teacher teacher = new Teacher();
+                        teacher.setName(json.getString("name"));
+                        teacher.setAge(Integer.parseInt(json.getString("age")));
+                        teacher.setSex(Integer.parseInt(json.getString("sex")));
+                        teacher.setEmail(json.getString("email"));
+                        teacher.setPhoneNum(json.getString("phoneNum"));
+                        teacher.setQqNum(json.getString("qqNum"));
+                        teacher.setWeChatNum(json.getString("weChatNum"));
+                        teacher.setAddress(json.getString("address"));
+                        teacher.setIdCard(json.getString("idCard"));
+                        teacher.setCollege(json.getString("college"));
+                        teacher.setProfession(json.getString("profession"));
+                        teacher.setOtherImports(json.getString("otherImports"));
+                        teacher.setCertification(json.getString("certification"));
+                        teacher.setCanTeacherGrade(json.getString("canTeacherGrade"));
+                        teacher.setCanTeacherSubject(json.getString("canTeacherSubject"));
+                        teacher.setCanTeacherArea(json.getString("canTeacherArea"));
+                        teacher.setTeachExperience(json.getString("teachExperience"));
+                        
+                        
                         boolean saveFlag = teacherService.saveOrUpdate(teacher);
                         if (saveFlag) {
                             dos.writeUTF(Response.SUCCESS);
@@ -106,7 +127,7 @@ public class TeacherServer
                     }
                 }
             } catch (SocketException e) {
-                System.out.println("һ����½���Ѿ��ر�....");
+                System.out.println("一个登陆窗已经关闭....");
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {

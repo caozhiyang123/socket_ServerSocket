@@ -101,7 +101,7 @@ public class OrderServer
                         order.setOrderId(orderId);
                         order.setStudentName(studentName);
                         order.setStudentAge(Integer.parseInt(studentAge));
-                        order.setStudentSex("ÄĞ".equals(studentSex)?1:("Å®".equals(studentSex)?0:3));
+                        order.setStudentSex("ç”·".equals(studentSex)?1:("å¥³".equals(studentSex)?0:3));
                         order.setStudentGrade(studentGrade);
                         order.setStudentSubject(studentSubject);
                         order.setAddress(address);
@@ -126,7 +126,7 @@ public class OrderServer
                         dos.writeUTF(order.getOrderId());
                         dos.writeUTF(order.getStudentName()== null?"":order.getStudentName());
                         dos.writeUTF(order.getStudentAge()+"");
-                        dos.writeUTF(order.getStudentSex()==1?"ÄĞ":(order.getStudentSex()==0?"Å®":"Î´Öª"));
+                        dos.writeUTF(order.getStudentSex()==1?"ç”·":(order.getStudentSex()==0?"å¥³":"æœªçŸ¥"));
                         dos.writeUTF(order.getStudentGrade()== null?"":order.getStudentGrade());
                         dos.writeUTF(order.getStudentSubject()== null?"":order.getStudentSubject());
                         dos.writeUTF(order.getAddress() == null?"":order.getAddress());
@@ -142,7 +142,7 @@ public class OrderServer
                     }
                 }
             } catch (SocketException e) {
-                System.out.println("Ò»¸öµÇÂ½´°ÒÑ¾­¹Ø±Õ....");
+                System.out.println("ä¸€ä¸ªç™»é™†çª—å·²ç»å…³é—­....");
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {

@@ -10,7 +10,7 @@ public class Server
     private Server(){}
     public static Server getInstance(){
         if(sos == null){
-            synchronized (sos)
+            synchronized (Server.class)
             {
                 server = new Server();
                 try
