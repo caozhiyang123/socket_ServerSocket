@@ -18,6 +18,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
@@ -34,9 +35,12 @@ import com.mysql.jdbc.StringUtils;
 
 public class OrderFrame extends JFrame {
 
-    Socket s;
-    DataOutputStream dos;
-    DataInputStream dis;
+    Socket orderSocket;
+    Socket teacherSocket;
+    DataOutputStream orderDos;
+    DataInputStream orderDis;
+    DataOutputStream teacherDos;
+    DataInputStream teacherDis;
     
     private static String res;
     
@@ -237,7 +241,7 @@ public class OrderFrame extends JFrame {
         
         addSaveOrUpdateButton(commit_panel, order_Field, name_Field, ageField, sexField, gradeField, phone_field,
                 resource_Field, subject_Field, address_Field, time_Field, costField, parentsName_field, qq_Field,
-                weChatNum_Field);
+                weChatNum_Field, create_Field, update_Field);
         
         addQueryButton(commit_panel, create_Field, order_Field, name_Field, ageField, sexField, gradeField, phone_field,
                 resource_Field, update_Field, subject_Field, address_Field, time_Field, costField, parentsName_field,
@@ -255,10 +259,10 @@ public class OrderFrame extends JFrame {
         
         resetWindoHightEvent(teacher_button);
         
+        connect();
         createTecPanel();
         
         
-        connect();
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
@@ -298,6 +302,9 @@ public class OrderFrame extends JFrame {
                 weChatNum_Field.setText("");
                 phone_field.setText("");
                 resource_Field.setText("");
+                create_Field.setText("");
+                update_Field.setText("");
+                
             }
         });
     }
@@ -322,27 +329,36 @@ public class OrderFrame extends JFrame {
             {
                 try
                 {
-                    dos.writeUTF(Request.QUERY_ORDER);
-                    String response = dis.readUTF();
+                    orderDos.writeUTF(Request.QUERY_ORDER);
+                    String response = orderDis.readUTF();
                     if (response.equals(Request.QUERY_ORDER)) {
                         String orderId = order_Field.getText();
-                        dos.writeUTF(orderId);
-                        orderId = dis.readUTF();
-                        String studentName = dis.readUTF();
-                        String studentAge = dis.readUTF();
-                        String studentSex = dis.readUTF();
-                        String studentGrade = dis.readUTF();
-                        String studentSubject = dis.readUTF();
-                        String address = dis.readUTF();
-                        String time = dis.readUTF();
-                        String cost = dis.readUTF();
-                        String parentsName = dis.readUTF();
-                        String qqNum = dis.readUTF();
-                        String weChatNum = dis.readUTF();
-                        String phoneNum = dis.readUTF();
-                        String messageResource = dis.readUTF();
-                        String createAt = dis.readUTF();
-                        String updateAt = dis.readUTF();
+                        orderDos.writeUTF(orderId);
+                        try {
+                            orderId = orderDis.readUTF();
+                        } catch (Exception e2) {
+                            e.paramString();
+                            javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "查无此订单"+orderId);
+                            emptyOrderInput(order_Field, name_Field, ageField, sexField, gradeField,
+                                    phone_field, resource_Field, subject_Field, address_Field, time_Field,
+                                    costField, parentsName_field, qq_Field, weChatNum_Field,create_Field,update_Field);
+                            return;
+                        }
+                        String studentName = orderDis.readUTF();
+                        String studentAge = orderDis.readUTF();
+                        String studentSex = orderDis.readUTF();
+                        String studentGrade = orderDis.readUTF();
+                        String studentSubject = orderDis.readUTF();
+                        String address = orderDis.readUTF();
+                        String time = orderDis.readUTF();
+                        String cost = orderDis.readUTF();
+                        String parentsName = orderDis.readUTF();
+                        String qqNum = orderDis.readUTF();
+                        String weChatNum = orderDis.readUTF();
+                        String phoneNum = orderDis.readUTF();
+                        String messageResource = orderDis.readUTF();
+                        String createAt = orderDis.readUTF();
+                        String updateAt = orderDis.readUTF();
                         
                         order_Field.setText(orderId);
                         name_Field.setText(studentName);
@@ -376,7 +392,7 @@ public class OrderFrame extends JFrame {
             final JTextField gradeField, final JTextField phone_field, final JTextField resource_Field,
             final JTextField subject_Field, final JTextField address_Field, final JTextField time_Field,
             final JTextField costField, final JTextField parentsName_field, final JTextField qq_Field,
-            final JTextField weChatNum_Field)
+            final JTextField weChatNum_Field,JTextField create_Field,JTextField update_Field)
     {
         // --
         final JButton commit_button = new JButton();
@@ -433,41 +449,30 @@ public class OrderFrame extends JFrame {
                 if(flag == false && !time.trim().equals("")){
                     try
                     {
-                        dos.writeUTF(Request.COMMIT_ORDER);
-                        String res = dis.readUTF();
+                        orderDos.writeUTF(Request.COMMIT_ORDER);
+                        String res = orderDis.readUTF();
                         if (Request.COMMIT_ORDER.equals(res)) {
-                            dos.writeUTF(orderId);
-                            dos.writeUTF(studentName);
-                            dos.writeUTF(studentAge);
-                            dos.writeUTF(studentSex);
-                            dos.writeUTF(studentGrade);
-                            dos.writeUTF(studentSubject);
-                            dos.writeUTF(address);
-                            dos.writeUTF(time);
-                            dos.writeUTF(cost);
-                            dos.writeUTF(parentsName);
-                            dos.writeUTF(qqNum);
-                            dos.writeUTF(weChatNum);
-                            dos.writeUTF(phoneNum);
-                            dos.writeUTF(messageResource);
-                            res = dis.readUTF();
+                            orderDos.writeUTF(orderId);
+                            orderDos.writeUTF(studentName);
+                            orderDos.writeUTF(studentAge);
+                            orderDos.writeUTF(studentSex);
+                            orderDos.writeUTF(studentGrade);
+                            orderDos.writeUTF(studentSubject);
+                            orderDos.writeUTF(address);
+                            orderDos.writeUTF(time);
+                            orderDos.writeUTF(cost);
+                            orderDos.writeUTF(parentsName);
+                            orderDos.writeUTF(qqNum);
+                            orderDos.writeUTF(weChatNum);
+                            orderDos.writeUTF(phoneNum);
+                            orderDos.writeUTF(messageResource);
+                            res = orderDis.readUTF();
                             if(Response.SUCCESS.equals(res)){
                                 javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "提交成功");
                                 
-                                order_Field.setText("");
-                                name_Field.setText("");
-                                ageField.setText("");
-                                sexField.setText("");
-                                gradeField.setText("");
-                                subject_Field.setText("");
-                                address_Field.setText("");
-                                time_Field.setText("");
-                                costField.setText("");
-                                parentsName_field.setText("");
-                                qq_Field.setText("");
-                                weChatNum_Field.setText("");
-                                phone_field.setText("");
-                                resource_Field.setText("");
+                                emptyOrderInput(order_Field, name_Field, ageField, sexField, gradeField,
+                                        phone_field, resource_Field, subject_Field, address_Field, time_Field,
+                                        costField, parentsName_field, qq_Field, weChatNum_Field, create_Field, update_Field);
                             }else{
                                 javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "提交失败");
                             }
@@ -483,17 +488,23 @@ public class OrderFrame extends JFrame {
                 }
             
             }
+
+            
         });
     }
 
     private static final String IP = "127.0.0.1";
-    private static final int PORT = 8888;
+    private static final int ORDER_PORT = 8888;
+    private static final int TEACHER_PORT = 8899;
     public void connect() {
         try {
-            s = new Socket(IP, PORT);
+            orderSocket = new Socket(IP, ORDER_PORT);
+            teacherSocket = new Socket(IP, TEACHER_PORT);
             System.out.println("一个客户端登陆中....!");
-            dos = new DataOutputStream(s.getOutputStream());
-            dis = new DataInputStream(s.getInputStream());
+            orderDos = new DataOutputStream(orderSocket.getOutputStream());
+            orderDis = new DataInputStream(orderSocket.getInputStream());
+            teacherDos = new DataOutputStream(teacherSocket.getOutputStream());
+            teacherDis = new DataInputStream(teacherSocket.getInputStream());
 
         } catch (ConnectException e) {
             System.out.println("服务端异常.........");
@@ -505,10 +516,24 @@ public class OrderFrame extends JFrame {
 
     public void disconnect() {
         try {
-            if (dos != null)
-                dos.close();
-            if (s != null)
-                s.close();
+            if(teacherDis != null){
+                teacherDis.close();
+            }
+            if(teacherDos != null){
+                teacherDos.close();
+            }
+            if(teacherSocket != null){
+                teacherSocket.close();
+            }
+            if(orderDis != null){
+                orderDis.close();
+            }
+            if (orderDos != null){
+                orderDos.close();
+            }
+            if (orderSocket != null){
+                orderSocket.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -550,6 +575,7 @@ public class OrderFrame extends JFrame {
         
         final JTextArea field_updated = new JTextArea();
         field_updated.setBounds(66, 30, 150, 40);
+        field_updated.setEnabled(false);
         query_panel.add(field_updated);
         
         final JLabel label_tec_name = new JLabel();
@@ -617,11 +643,11 @@ public class OrderFrame extends JFrame {
         
         final JLabel label_tec_id = new JLabel();
         label_tec_id.setText("ID：");
-        label_tec_id.setBounds(10, 440, 66, 18);
+        label_tec_id.setBounds(10, 450, 66, 18);
         query_panel.add(label_tec_id);
         
         final JTextArea field_tec_id = new JTextArea();
-        field_tec_id.setBounds(66, 430, 150, 40);
+        field_tec_id.setBounds(66, 440, 100, 40);
         field_tec_id.setEnabled(false);
         query_panel.add(field_tec_id);
         
@@ -670,6 +696,8 @@ public class OrderFrame extends JFrame {
         
         final JTextArea field_tec_otherImports = new JTextArea();
         field_tec_otherImports.setBounds(292, 230, 150, 90);
+        field_tec_otherImports.setLineWrap(true);//激活自动换行功能 
+        field_tec_otherImports.setWrapStyleWord(true);// 激活断行不断字功能
         query_panel.add(field_tec_otherImports);
         
         final JLabel label_tec_item = new JLabel();
@@ -679,6 +707,8 @@ public class OrderFrame extends JFrame {
         
         final JTextArea field_tec_item = new JTextArea();
         field_tec_item.setBounds(292, 330, 150, 90);
+        field_tec_item.setLineWrap(true);//激活自动换行功能 
+        field_tec_item.setWrapStyleWord(true);// 激活断行不断字功能
         query_panel.add(field_tec_item);
         
         //-- right right
@@ -755,12 +785,31 @@ public class OrderFrame extends JFrame {
         
         final JTextArea field_tec_orderIds  = new JTextArea();
         field_tec_orderIds.setBounds(508, 380, 150, 40);
-        field_tec_orderIds.setEnabled(false);
         query_panel.add(field_tec_orderIds);
+        
+        final JButton empty_button = new JButton();
+        empty_button.setText("清空");
+        empty_button.setBounds(200, 440, 80, 40);
+        query_panel.add(empty_button);
+        empty_button.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                emptyTeacherInput(field_updated, field_tec_name, field_tec_phone, field_tec_qq,
+                        field_tec_weChat, field_tec_age, field_tec_sex, field_tec_email,
+                        field_tec_address, field_tec_idCard, field_tec_college,
+                        field_tec_profession, field_tec_otherImports, field_tec_item,
+                        field_tec_certification, field_tec_canTeacherGrade,
+                        field_tec_canTeacherSubject, field_tec_canTeacherArea,
+                        field_tec_teachExperience, field_tec_createAt, field_tec_updateAt,
+                        field_tec_orderIds);
+            }
+        });
         
         final JButton save_button = new JButton();
         save_button.setText("保存/修改");
-        save_button.setBounds(292, 440, 91, 40);
+        save_button.setBounds(393, 440, 91, 40);
         query_panel.add(save_button);
         save_button.addActionListener(new ActionListener()
         {
@@ -784,6 +833,7 @@ public class OrderFrame extends JFrame {
                 String tec_canTeacherSubject = field_tec_canTeacherSubject.getText();
                 String tec_canTeacherArea = field_tec_canTeacherArea.getText();
                 String tec_teachExperience = field_tec_teachExperience.getText();
+                String tec_updated = field_updated.getText();
 //                String tec_id = field_tec_id.getText();
                 
                 Teacher teacher = new Teacher();
@@ -804,41 +854,28 @@ public class OrderFrame extends JFrame {
                 teacher.setCanTeacherSubject(tec_canTeacherSubject.trim());
                 teacher.setCanTeacherArea(tec_canTeacherArea.trim());
                 teacher.setTeachExperience(tec_teachExperience.trim());
+                teacher.setUpdated(StringUtils.isNullOrEmpty(tec_updated.trim())?0:Integer.parseInt(tec_updated.trim()));
 //                teacher.setId(Long.parseLong(tec_id));
                 
                 String teacherJson = JSON.toJSONString(teacher);
                 
                 try
                 {
-                    dos.writeUTF(Request.COMMIT_TEC);
-                    String res = dis.readUTF();
+                    teacherDos.writeUTF(Request.COMMIT_TEC);
+                    String res = teacherDis.readUTF();
                     if(Request.COMMIT_TEC.equals(res)){
-                        dos.writeUTF(teacherJson);
-                        res = dis.readUTF();
+                        teacherDos.writeUTF(teacherJson);
+                        res = teacherDis.readUTF();
                         if(Response.SUCCESS.equals(res)){
                             javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "提交成功");
-                            field_updated.setText("");
-                            field_tec_name.setText("");
-                            field_tec_age.setText("");
-                            field_tec_sex.setText("");
-                            field_tec_email.setText("");
-                            field_tec_phone.setText("");
-                            field_tec_qq.setText("");
-                            field_tec_weChat.setText("");
-                            field_tec_address.setText("");
-                            field_tec_idCard.setText("");
-                            field_tec_college.setText("");
-                            field_tec_profession.setText("");
-                            field_tec_otherImports.setText("");
-                            field_tec_certification.setText("");
-                            field_tec_canTeacherGrade.setText("");
-                            field_tec_canTeacherSubject.setText("");
-                            field_tec_canTeacherArea.setText("");
-                            field_tec_teachExperience.setText("");
-                            field_tec_createAt.setText("");
-                            field_tec_updateAt.setText("");
-                            field_tec_orderIds.setText("");
-                            field_tec_item.setText("");
+                            emptyTeacherInput(field_updated, field_tec_name, field_tec_phone, field_tec_qq,
+                                    field_tec_weChat, field_tec_age, field_tec_sex, field_tec_email,
+                                    field_tec_address, field_tec_idCard, field_tec_college,
+                                    field_tec_profession, field_tec_otherImports, field_tec_item,
+                                    field_tec_certification, field_tec_canTeacherGrade,
+                                    field_tec_canTeacherSubject, field_tec_canTeacherArea,
+                                    field_tec_teachExperience, field_tec_createAt, field_tec_updateAt,
+                                    field_tec_orderIds);
                         }else{
                             javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "提交失败");
                         }
@@ -849,32 +886,35 @@ public class OrderFrame extends JFrame {
                     e1.printStackTrace();
                 }
             }
+
         });
         
         
         final JButton orderId_button = new JButton();
         orderId_button.setText("电话查询");
-        orderId_button.setBounds(393, 440, 91, 40);
+        orderId_button.setBounds(292, 440, 91, 40);
         query_panel.add(orderId_button);
         orderId_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String tec_phone = field_tec_phone.getText();
                 try {
-                    dos.writeUTF(Request.QUERY_TEC_BY_TEACHER_PHONE);
-                    String res = dis.readUTF();
+                    teacherDos.writeUTF(Request.QUERY_TEC_BY_TEACHER_PHONE);
+                    String res = teacherDis.readUTF();
                     if(Request.QUERY_TEC_BY_TEACHER_PHONE.equals(res)){
-                        dos.writeUTF(tec_phone);
-                        String teacherStr = dis.readUTF();
+                        teacherDos.writeUTF(tec_phone);
+                        String teacherStr = teacherDis.readUTF();
                         JSONObject json = (JSONObject) JSON.parse(teacherStr);
-                        
+                        if(json ==null){
+                            javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "查无此人");
+                            return;
+                        }
                         Teacher teacher = initTeacher(json);
-                        
                         
                         field_tec_id.setText(teacher.getId()+"");
                         field_tec_name.setText(teacher.getName());
                         field_tec_age.setText(teacher.getAge()+"");
-                        field_tec_sex.setText(teacher.getSex()+"");
+                        field_tec_sex.setText(teacher.getSex()==1?"男":(teacher.getSex()==0?"女":"未知"));
                         field_tec_email.setText(teacher.getEmail());
                         field_tec_phone.setText(teacher.getPhoneNum());
                         field_tec_qq.setText(teacher.getQqNum());
@@ -906,15 +946,125 @@ public class OrderFrame extends JFrame {
         
         final JPanel query_tec_panel = new JPanel();
         query_tec_panel.setLayout(null);
-        query_tec_panel.setBorder(new TitledBorder(null, "相关老师", TitledBorder.DEFAULT_JUSTIFICATION,
+        query_tec_panel.setBorder(new TitledBorder(null, "预约订单", TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, null, null));
-        query_tec_panel.setBounds(0, 500, 1360, 200);
+        query_tec_panel.setBounds(0, 500, 660, 200);
         getContentPane().add(query_tec_panel);
         
+        
+        final JLabel label_orderId = new JLabel();
+        label_orderId.setText("订单号:");
+        label_orderId.setBounds(10, 30, 40, 18);
+        query_tec_panel.add(label_orderId);
+        
+        final JTextField orderId_field = new JTextField();
+        orderId_field.setText("A00");
+        orderId_field.setBounds(50, 20, 100, 40);
+        query_tec_panel.add(orderId_field);
+        
+        final JLabel label_tecId = new JLabel();
+        label_tecId.setText("老师编号:");
+        label_tecId.setBounds(150, 30, 60, 18);
+        query_tec_panel.add(label_tecId);
+        
+        final JTextField tecId_field = new JTextField();
+        tecId_field.setText("0");
+        tecId_field.setBounds(210, 20, 100, 40);
+        query_tec_panel.add(tecId_field);
+        
+        final JButton bound_button = new JButton();
+        bound_button.setText("预约订单");
+        bound_button.setBounds(310, 20, 100, 40);
+        query_tec_panel.add(bound_button);
+        bound_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    String orderId = orderId_field.getText();
+                    String teacherId = tecId_field.getText();
+                    
+                    teacherDos.writeUTF(Request.BOUND_ORDER);
+                    String res = teacherDis.readUTF();
+                    if(Request.BOUND_ORDER.equals(res)){
+                        boundOrRleaseOrder(orderId_field, tecId_field, orderId, teacherId);
+                        /*
+                        boolean flag = false;
+                        if(StringUtils.isNullOrEmpty(orderId.trim())){
+                            javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "订单号必须填写...");
+                            flag = true;
+                            return;
+                        }
+                        if(flag == false && StringUtils.isNullOrEmpty(teacherId.trim())){
+                            javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "老师编号必须填写...");
+                            flag = true;
+                            return;
+                        }else if(flag == false && !StringUtils.isNullOrEmpty(teacherId.trim())){
+                            try {
+                                Integer.parseInt(teacherId.trim());
+                            } catch (NumberFormatException e1) {
+                                e1.printStackTrace();
+                                javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "请正确填写老师编号...");
+                                flag = true;
+                                return;
+                            }
+                        }
+                        teacherDos.writeUTF(orderId);
+                        teacherDos.writeUTF(teacherId);
+                        res = teacherDis.readUTF();
+                        if(Response.SUCCESS.equals(res)){
+                            javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "绑定成功");
+                            orderId_field.setText("");
+                            tecId_field.setText("");
+                        }else{
+                            javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "绑定失败");
+                        }
+                        
+                    */}
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+        
+        final JButton release_button = new JButton();
+        release_button.setText("解绑订单");
+        release_button.setBounds(420, 20, 100, 40);
+        query_tec_panel.add(release_button);
+        release_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    String orderId = orderId_field.getText();
+                    String teacherId = tecId_field.getText();
+                    
+                    teacherDos.writeUTF(Request.RELEASE_ORDER);
+                    String res = teacherDis.readUTF();
+                    if(Request.RELEASE_ORDER.equals(res)){
+                        boundOrRleaseOrder(orderId_field, tecId_field, orderId, teacherId);
+                        
+                    }
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+
+            
+        });
+        
+        
+        final JPanel order_tec_panel = new JPanel();
+        order_tec_panel.setLayout(null);
+        order_tec_panel.setBorder(new TitledBorder(null, "相关老师", TitledBorder.DEFAULT_JUSTIFICATION,
+                TitledBorder.DEFAULT_POSITION, null, null));
+        order_tec_panel.setBounds(670, 500, 690, 200);
+        getContentPane().add(order_tec_panel);
+        
         JTextArea teaArea = new JTextArea();
-        teaArea.setSize(1360, 200);
-        teaArea.setEnabled(false);
-        query_tec_panel.add(teaArea);
+        teaArea.setBounds(10, 15, 670, 180);
+        teaArea.setLineWrap(true);//激活自动换行功能 
+        teaArea.setWrapStyleWord(true);// 激活断行不断字功能
+        order_tec_panel.add(teaArea);
+//        order_tec_panel.add(new JScrollPane(teaArea));
 
         JTextField field_orderId = new JTextField();
         field_orderId.setBounds(494, 440, 91, 40);
@@ -929,17 +1079,28 @@ public class OrderFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String tec_orderId = field_orderId.getText();
                 try {
-                    dos.writeUTF(Request.QUERY_TEC_BY_ORDERID);
-                    String res = dis.readUTF();
+                    teacherDos.writeUTF(Request.QUERY_TEC_BY_ORDERID);
+                    String res = teacherDis.readUTF();
                     if(Request.QUERY_TEC_BY_ORDERID.equals(res)){
-                        dos.writeUTF(tec_orderId);
-                        String teachers = dis.readUTF();
+                        teacherDos.writeUTF(tec_orderId);
+                        String teachers = teacherDis.readUTF();
                         JSONArray  jsonArr  = (JSONArray) JSON.parse(teachers);
+                        if(jsonArr == null || jsonArr.size() == 0){
+                            javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "查无与订单"+tec_orderId+"相关的人");
+                            return;
+                        }
                         StringBuffer sb = new StringBuffer();
                         for (Object obj : jsonArr) {
                             JSONObject jsonObj = (JSONObject)obj;
+                            if(jsonObj == null){
+                                continue;
+                            }
                             Teacher tea = initTeacher(jsonObj);
-                            sb.append(tea.toString()+"/r/n");
+                            sb.append(tea.toString());
+                        }
+                        if(StringUtils.isNullOrEmpty(sb.toString())){
+                            javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "查无与订单"+tec_orderId+"相关的人");
+                            return;
                         }
                         teaArea.setText(sb.toString());
                     }
@@ -977,6 +1138,101 @@ public class OrderFrame extends JFrame {
         teacher.setOrderIds(json.getString("orderIds"));
         teacher.setUpdated(json.getIntValue("updated"));
         return teacher;
+    }
+    
+    private void emptyTeacherInput(final JTextArea field_updated, final JTextArea field_tec_name,
+            final JTextArea field_tec_phone, final JTextArea field_tec_qq,
+            final JTextArea field_tec_weChat, final JTextArea field_tec_age,
+            final JTextArea field_tec_sex, final JTextArea field_tec_email,
+            final JTextArea field_tec_address, final JTextArea field_tec_idCard,
+            final JTextArea field_tec_college, final JTextArea field_tec_profession,
+            final JTextArea field_tec_otherImports, final JTextArea field_tec_item,
+            final JTextArea field_tec_certification, final JTextArea field_tec_canTeacherGrade,
+            final JTextArea field_tec_canTeacherSubject, final JTextArea field_tec_canTeacherArea,
+            final JTextArea field_tec_teachExperience, final JTextArea field_tec_createAt,
+            final JTextArea field_tec_updateAt, final JTextArea field_tec_orderIds) {
+        field_updated.setText("");
+        field_tec_name.setText("");
+        field_tec_age.setText("");
+        field_tec_sex.setText("");
+        field_tec_email.setText("");
+        field_tec_phone.setText("");
+        field_tec_qq.setText("");
+        field_tec_weChat.setText("");
+        field_tec_address.setText("");
+        field_tec_idCard.setText("");
+        field_tec_college.setText("");
+        field_tec_profession.setText("");
+        field_tec_otherImports.setText("");
+        field_tec_certification.setText("");
+        field_tec_canTeacherGrade.setText("");
+        field_tec_canTeacherSubject.setText("");
+        field_tec_canTeacherArea.setText("");
+        field_tec_teachExperience.setText("");
+        field_tec_createAt.setText("");
+        field_tec_updateAt.setText("");
+        field_tec_orderIds.setText("");
+        field_tec_item.setText("");
+    }
+    
+    private void boundOrRleaseOrder(final JTextField orderId_field, final JTextField tecId_field,
+            String orderId, String teacherId) throws IOException {
+        String res;
+        boolean flag = false;
+        if(StringUtils.isNullOrEmpty(orderId.trim())){
+            javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "订单号必须填写...");
+            flag = true;
+            return;
+        }
+        if(flag == false && StringUtils.isNullOrEmpty(teacherId.trim())){
+            javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "老师编号必须填写...");
+            flag = true;
+            return;
+        }else if(flag == false && !StringUtils.isNullOrEmpty(teacherId.trim())){
+            try {
+                Integer.parseInt(teacherId.trim());
+            } catch (NumberFormatException e1) {
+                e1.printStackTrace();
+                javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "请正确填写老师编号...");
+                flag = true;
+                return;
+            }
+        }
+        teacherDos.writeUTF(orderId);
+        teacherDos.writeUTF(teacherId);
+        res = teacherDis.readUTF();
+        if(Response.SUCCESS.equals(res)){
+            javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "成功");
+            orderId_field.setText("");
+            tecId_field.setText("");
+        }else{
+            javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "失败");
+        }
+    }
+    
+    private void emptyOrderInput(final JTextField order_Field, final JTextField name_Field,
+            final JTextField ageField, final JTextField sexField, final JTextField gradeField,
+            final JTextField phone_field, final JTextField resource_Field,
+            final JTextField subject_Field, final JTextField address_Field,
+            final JTextField time_Field, final JTextField costField,
+            final JTextField parentsName_field, final JTextField qq_Field,
+            final JTextField weChatNum_Field,JTextField create_Field,JTextField update_Field) {
+        order_Field.setText("");
+        name_Field.setText("");
+        ageField.setText("");
+        sexField.setText("");
+        gradeField.setText("");
+        subject_Field.setText("");
+        address_Field.setText("");
+        time_Field.setText("");
+        costField.setText("");
+        parentsName_field.setText("");
+        qq_Field.setText("");
+        weChatNum_Field.setText("");
+        phone_field.setText("");
+        resource_Field.setText("");
+        create_Field.setText("");
+        update_Field.setText("");
     }
 
 }

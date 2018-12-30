@@ -1,0 +1,37 @@
+/bin/bash
+ #description: 启动重启server服务 
+ #端口号，根据此端口号确定PID  
+ PORT1=8888
+ PORT2=8899
+ #启动命令所在目录  
+ #HOME='/usr/etc/server/java/server'  
+   
+ #查询出监听了PORT端口TCP协议的程序  
+ pid1=`netstat -anp|grep $PORT1|awk '{printf $7}'|cut -d/ -f1`  
+ pid2=`netstat -anp|grep $PORT2|awk '{printf $7}'|cut -d/ -f1`     
+start(){  
+   if [ -n "$pid1" "pid2" ]; then  
+       echo "server already start,pid:$pid1"  
+	   echo "server already start,pid:$pid2"  
+      return 0
+    fi
+    #进入命令所在目录  
+    #cd $HOME  
+    #nohup java -jar $HOME/pserver9997.jar > $HOME/server.log 2>&1 &   #启动聊天服务器 把日志输出到HOME目录的server.log文件中   
+    nohup java -jar orderServer.jar
+	nohup java -jar teacherServer.jar
+	nohup java -jar client.jar
+	echo "start at port:$PORT1"  
+	echo "start at port:$PORT2"
+}
+
+stop(){  
+    if [ -z "$pid1" ]; then  
+       echo "not find program on port:$PORT1"  
+       return 0
+    fi
+    #结束程序，使用讯号2，如果不行可以尝试讯号9强制结束  
+    kill -9 $pid1
+    rm -rf $pid1
+    echo "kill program use signal 2,pid:$pid1"  
+ }  

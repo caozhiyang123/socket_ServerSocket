@@ -5,26 +5,46 @@ import java.net.ServerSocket;
 
 public class Server
 {
-    private static ServerSocket sos;
+    private static ServerSocket loginSos;
+    private static ServerSocket orderSos;
+    private static ServerSocket teaSos;
     private static Server server;
     private Server(){}
     public static Server getInstance(){
-        if(sos == null){
+        if(server == null || teaSos == null){
             synchronized (Server.class)
             {
-                server = new Server();
-                try
-                {
-                    sos = new ServerSocket(8888);
-                } catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
+               try {
+                   server = new Server();
+                   loginSos = new ServerSocket(8887);
+//                   orderSos = new ServerSocket(8888);
+//                   teaSos = new ServerSocket(8899);
+               } catch (IOException e) {
+                   e.printStackTrace();
+               }
             }
         }
         return server;
     }
-    public ServerSocket getServerSocket(){
-        return sos;
+    /**
+     *  port 8887
+     * @return
+     */
+    public ServerSocket getLoginServerSocket(){
+        return loginSos;
+    }
+    /**
+     *  port 8888
+     * @return
+     */
+    public ServerSocket getOrderServerSocket(){
+        return orderSos;
+    }
+    /**
+     *  port 8889
+     * @return
+     */
+    public ServerSocket getTeaServerSocket(){
+        return teaSos;
     }
 }
