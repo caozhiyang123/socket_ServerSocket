@@ -14,6 +14,17 @@ public class TeacherAndOrderDao {
     private static final String TEC_ORDER_TB = "tec_order_tb";
     private static final String TEC_ID = "tec_id";
     private static final String ORD_ID = "ord_id";
+    private static final String START_TEACH_TIME = "start_teach_time";
+    private static final String IS_PARENT_PAYED = "is_parent_payed";
+    private static final String parent_cost = "parent_cost";
+    private static final String IS_TEACHER_PAYED = "is_teacher_payed";
+    private static final String TEACHER_COST = "teacher_cost";
+    private static final String CREATE_AT = "create_at";
+    private static final String UPDATE_AT = "update_at";
+    private static final String UPDATED = "updated";
+    private static final String USED = "used";
+    
+    
     
     public List<TeacherAndOrder> queryByOrderId(String orderId){
         List<TeacherAndOrder> tecOrds = new ArrayList<TeacherAndOrder>();

@@ -1,5 +1,6 @@
 package com.baifenjy.frame;
 
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,8 +30,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.baifenjy.io.Request;
 import com.baifenjy.io.Response;
 import com.baifenjy.utils.Center;
+import com.baifenjy.utils.DatePickUtils;
 import com.baifenjy.vo.Order;
 import com.baifenjy.vo.Teacher;
+import com.eltima.components.ui.DatePicker;
 import com.mysql.jdbc.StringUtils;
 
 public class OrderFrame extends JFrame {
@@ -87,7 +90,7 @@ public class OrderFrame extends JFrame {
         jScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
       //定义一个JPanel面板 以整合其他面板
         final JPanel panel = new JPanel();
-        
+        panel.setPreferredSize(new Dimension(2800,2000)); 
         panel.setLayout(null);
         jScrollPane.setViewportView(panel);
         getContentPane().add(jScrollPane);
@@ -116,6 +119,11 @@ public class OrderFrame extends JFrame {
         panel.add(order_tec_panel);
         createOrderQueryPanel(order_tec_panel, query_panel);
         
+        final JPanel data_analyse_panel = new JPanel();
+        panel.add(data_analyse_panel);
+        createDataAnalysePanel(data_analyse_panel);
+        
+        
         connect();
         
         this.addWindowListener(new WindowAdapter() {
@@ -124,6 +132,37 @@ public class OrderFrame extends JFrame {
                 disconnect();
             }
         });
+    }
+
+
+    private void createDataAnalysePanel(JPanel data_analyse_panel) {
+        data_analyse_panel.setLayout(null);
+        data_analyse_panel.setBounds(0, 700, 1360, 500);
+        data_analyse_panel.setBorder(new TitledBorder(null, "数据分析", TitledBorder.DEFAULT_JUSTIFICATION,
+                TitledBorder.DEFAULT_POSITION, null, null));
+        
+        JLabel start_label = new JLabel("开始日期:");
+        start_label.setBounds(10, 45, 66, 18);
+        data_analyse_panel.add(start_label);
+        
+        DatePicker start_date = DatePickUtils.getDatePicker();
+        start_date.setBounds(76, 30, 155, 50);
+        data_analyse_panel.add(start_date);
+        
+        
+        JLabel end_label = new JLabel("结束日期:");
+        end_label.setBounds(241,45, 66, 18);
+        data_analyse_panel.add(end_label);
+        
+        DatePicker end_date = DatePickUtils.getDatePicker();
+        end_date.setBounds(307, 30, 155, 50);
+        data_analyse_panel.add(end_date);
+        
+        JButton to_teach_button = new JButton("试教查询");
+        to_teach_button.setBounds(502, 30, 145, 50);
+        data_analyse_panel.add(to_teach_button);
+        
+        
     }
 
 
@@ -1070,9 +1109,6 @@ public class OrderFrame extends JFrame {
         query_tec_panel.setBorder(new TitledBorder(null, "预约订单", TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, null, null));
         query_tec_panel.setBounds(0, 500, 660, 200);
-//        panel.add(query_tec_panel);
-//        getContentPane().add(query_tec_panel);
-        
         
         final JLabel label_orderId = new JLabel();
         label_orderId.setText("订单号:");
