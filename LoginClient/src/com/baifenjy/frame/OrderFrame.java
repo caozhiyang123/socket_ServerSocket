@@ -16,8 +16,10 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
@@ -73,19 +75,65 @@ public class OrderFrame extends JFrame {
     
     public OrderFrame(){
         setTitle("管理系统_v1.0_上海力霆教育科技有限公司_[www.baifenjy.com]");
-        getContentPane().setLayout(null);
-        setBounds(100, 100, 1350, 750);
-        
+        setBounds(100, 100, 1000, 700);
+        this.setVisible(true);
      // 设置窗口居中
         this.setLocation(Center.getPoint(this.getSize()));
+
+        final JScrollPane jScrollPane = new JScrollPane();
+        //设置水平滚动条一直显示
+        jScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        //设置垂直滚动条需要时显示
+        jScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+      //定义一个JPanel面板 以整合其他面板
+        final JPanel panel = new JPanel();
+        
+        panel.setLayout(null);
+        jScrollPane.setViewportView(panel);
+        getContentPane().add(jScrollPane);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
         final JPanel commit_panel = new JPanel();
+        panel.add(commit_panel);
+        createOrderPanel(commit_panel);
+        
+        
+        /*final JButton teacher_button = new JButton();
+        teacher_button.setText("上门老师");
+        teacher_button.setBounds(248, 440, 91, 40);
+        commit_panel.add(teacher_button);
+        resetWindoHightEvent(teacher_button);*/
+        
+        final JPanel query_panel = new JPanel();
+        panel.add(query_panel);
+        createTecPanel(panel,query_panel);
+        
+        final JPanel query_tec_panel = new JPanel();
+        panel.add(query_tec_panel);
+        createBoundPanel(query_tec_panel);
+        
+        final JPanel order_tec_panel = new JPanel();
+        panel.add(order_tec_panel);
+        createOrderQueryPanel(order_tec_panel, query_panel);
+        
+        connect();
+        
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                disconnect();
+            }
+        });
+    }
+
+
+    private void createOrderPanel(JPanel commit_panel) {
         commit_panel.setLayout(null);
         commit_panel.setBorder(new TitledBorder(null, "新增订单", TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, null, null));
         commit_panel.setBounds(0, 0, 660, 500);
         commit_panel.setVisible(true);
-        getContentPane().add(commit_panel);
-
+        
       // --left up
         final JLabel label_create = new JLabel();
         label_create.setText("创建时间");
@@ -270,24 +318,6 @@ public class OrderFrame extends JFrame {
         addEmptyButton(commit_panel, create_Field, order_Field, name_Field, ageField, sexField, gradeField, phone_field,
                 resource_Field, update_Field, subject_Field, address_Field, time_Field, costField, parentsName_field,
                 qq_Field, weChatNum_Field,copyOrder_Field);
-        
-        
-        /*final JButton teacher_button = new JButton();
-        teacher_button.setText("上门老师");
-        teacher_button.setBounds(248, 440, 91, 40);
-        commit_panel.add(teacher_button);
-        resetWindoHightEvent(teacher_button);*/
-        
-        connect();
-        createTecPanel();
-        
-        
-        this.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent e) {
-                disconnect();
-            }
-        });
     }
 
 
@@ -588,14 +618,14 @@ public class OrderFrame extends JFrame {
     }
 
 
-    public void createTecPanel()
+    public void createTecPanel(JPanel panel, JPanel query_panel)
     {
-        final JPanel query_panel = new JPanel();
         query_panel.setLayout(null);
         query_panel.setBorder(new TitledBorder(null, "上门老师", TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, null, null));
         query_panel.setBounds(670, 0, 689, 500);
-        getContentPane().add(query_panel);
+//        panel.add(query_panel);
+//        getContentPane().add(query_panel);
         
         // -- left
         final JLabel label_updated = new JLabel();
@@ -972,14 +1002,76 @@ public class OrderFrame extends JFrame {
 
             
         });
+    }
 
+
+    private void createOrderQueryPanel(JPanel order_tec_panel, final JPanel query_panel) {
+        order_tec_panel.setLayout(null);
+        order_tec_panel.setBorder(new TitledBorder(null, "相关老师", TitledBorder.DEFAULT_JUSTIFICATION,
+                TitledBorder.DEFAULT_POSITION, null, null));
+        order_tec_panel.setBounds(670, 500, 690, 200);
+//        getContentPane().add(order_tec_panel);
         
-        final JPanel query_tec_panel = new JPanel();
+        JTextArea teaArea = new JTextArea();
+        teaArea.setBounds(10, 15, 670, 180);
+        teaArea.setLineWrap(true);//激活自动换行功能 
+        teaArea.setWrapStyleWord(true);// 激活断行不断字功能
+        order_tec_panel.add(teaArea);
+//        order_tec_panel.add(new JScrollPane(teaArea));
+
+        JTextField field_orderId = new JTextField();
+        field_orderId.setBounds(494, 440, 91, 40);
+        query_panel.add(field_orderId);
+        
+        final JButton phone_button = new JButton();
+        phone_button.setText("订单号查询");
+        phone_button.setBounds(585, 440, 91, 40);
+        query_panel.add(phone_button);
+        phone_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String tec_orderId = field_orderId.getText();
+                try {
+                    teacherDos.writeUTF(Request.QUERY_TEC_BY_ORDERID);
+                    String res = teacherDis.readUTF();
+                    if(Request.QUERY_TEC_BY_ORDERID.equals(res)){
+                        teacherDos.writeUTF(tec_orderId);
+                        String teachers = teacherDis.readUTF();
+                        JSONArray  jsonArr  = (JSONArray) JSON.parse(teachers);
+                        if(jsonArr == null || jsonArr.size() == 0){
+                            javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "查无与订单"+tec_orderId+"相关的人");
+                            return;
+                        }
+                        StringBuffer sb = new StringBuffer();
+                        for (Object obj : jsonArr) {
+                            JSONObject jsonObj = (JSONObject)obj;
+                            if(jsonObj == null){
+                                continue;
+                            }
+                            Teacher tea = initTeacher(jsonObj);
+                            sb.append(tea.toString());
+                        }
+                        if(StringUtils.isNullOrEmpty(sb.toString())){
+                            javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "查无与订单"+tec_orderId+"相关的人");
+                            return;
+                        }
+                        teaArea.setText(sb.toString());
+                    }
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+    }
+
+
+    private void createBoundPanel(JPanel query_tec_panel) {
         query_tec_panel.setLayout(null);
         query_tec_panel.setBorder(new TitledBorder(null, "预约订单", TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, null, null));
         query_tec_panel.setBounds(0, 500, 660, 200);
-        getContentPane().add(query_tec_panel);
+//        panel.add(query_tec_panel);
+//        getContentPane().add(query_tec_panel);
         
         
         final JLabel label_orderId = new JLabel();
@@ -1048,66 +1140,6 @@ public class OrderFrame extends JFrame {
 
             
         });
-        
-        
-        final JPanel order_tec_panel = new JPanel();
-        order_tec_panel.setLayout(null);
-        order_tec_panel.setBorder(new TitledBorder(null, "相关老师", TitledBorder.DEFAULT_JUSTIFICATION,
-                TitledBorder.DEFAULT_POSITION, null, null));
-        order_tec_panel.setBounds(670, 500, 690, 200);
-        getContentPane().add(order_tec_panel);
-        
-        JTextArea teaArea = new JTextArea();
-        teaArea.setBounds(10, 15, 670, 180);
-        teaArea.setLineWrap(true);//激活自动换行功能 
-        teaArea.setWrapStyleWord(true);// 激活断行不断字功能
-        order_tec_panel.add(teaArea);
-//        order_tec_panel.add(new JScrollPane(teaArea));
-
-        JTextField field_orderId = new JTextField();
-        field_orderId.setBounds(494, 440, 91, 40);
-        query_panel.add(field_orderId);
-        
-        final JButton phone_button = new JButton();
-        phone_button.setText("订单号查询");
-        phone_button.setBounds(585, 440, 91, 40);
-        query_panel.add(phone_button);
-        phone_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String tec_orderId = field_orderId.getText();
-                try {
-                    teacherDos.writeUTF(Request.QUERY_TEC_BY_ORDERID);
-                    String res = teacherDis.readUTF();
-                    if(Request.QUERY_TEC_BY_ORDERID.equals(res)){
-                        teacherDos.writeUTF(tec_orderId);
-                        String teachers = teacherDis.readUTF();
-                        JSONArray  jsonArr  = (JSONArray) JSON.parse(teachers);
-                        if(jsonArr == null || jsonArr.size() == 0){
-                            javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "查无与订单"+tec_orderId+"相关的人");
-                            return;
-                        }
-                        StringBuffer sb = new StringBuffer();
-                        for (Object obj : jsonArr) {
-                            JSONObject jsonObj = (JSONObject)obj;
-                            if(jsonObj == null){
-                                continue;
-                            }
-                            Teacher tea = initTeacher(jsonObj);
-                            sb.append(tea.toString());
-                        }
-                        if(StringUtils.isNullOrEmpty(sb.toString())){
-                            javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "查无与订单"+tec_orderId+"相关的人");
-                            return;
-                        }
-                        teaArea.setText(sb.toString());
-                    }
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        });
-        
     }
 
     private Teacher initTeacher(JSONObject json) {
