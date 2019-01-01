@@ -120,13 +120,11 @@ public class TeacherController
                     } else if (request.equals(Request.QUERY_TEC_BY_ORDERID)) {
                         String orderId = dis.readUTF();
                         List<Teacher> tecs = teacherService.queryByOrderId(orderId);
-                        String tecsString = JSON.toJSONString(tecs);
-                        dos.writeUTF(tecsString);
+                        dos.writeUTF(JSON.toJSONString(tecs));
                     } else if(request.equals(Request.QUERY_TEC_BY_TEACHER_PHONE)){
                         String phone = dis.readUTF();
                         Teacher teacher = teacherService.queryByPhone(phone);
-                        String teacherStr = JSON.toJSONString(teacher);
-                        dos.writeUTF(teacherStr);
+                        dos.writeUTF(JSON.toJSONString(teacher));
                     }
                 }
             } catch (SocketException e) {

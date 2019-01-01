@@ -17,7 +17,12 @@ public class OrderServiceImpl implements OrderService
         if(orderOld == null){
             return addNewOrder(order);
         }else{
-            return updateOrder(order);
+            if(orderOld.getUpdated() == order.getUpdated()){
+                order.setUpdated(order.getUpdated()+1);
+                return updateOrder(order);
+            }else{
+                return false;
+            }
         }
     }
     
@@ -26,6 +31,7 @@ public class OrderServiceImpl implements OrderService
         String time = ThreadLocalSimple.df.get().format(new Date());
         order.setCreateAt(time);
         order.setUpdateAt(time);
+        order.setUpdated(0);
         return orderDao.addNewOrder(order);
     }
     
@@ -37,9 +43,18 @@ public class OrderServiceImpl implements OrderService
     
     @Override
     public Order queryByOrderId(String orderId){
-       return  orderDao.queryByOrderId(orderId);
+        Order order = orderDao.queryByOrderId(orderId);
+        initParamters(order);
+       return  order;
     }
     
+    private void initParamters(Order order) {
+        if(order == null){
+            return ;
+        }
+        order.setOrderItem(order.toString());
+    }
+
     @Override
     public Map<String,Order> pageQuery(int pageNum,int pageSize){
         return orderDao.pageQuery(pageNum,(pageSize-1)*pageNum);

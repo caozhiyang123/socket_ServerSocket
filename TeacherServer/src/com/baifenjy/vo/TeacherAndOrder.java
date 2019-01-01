@@ -2,8 +2,11 @@ package com.baifenjy.vo;
 
 public class TeacherAndOrder {
 
-    public long teacherId;
-    public String orderId;
+    private long teacherId;
+    private String orderId;
+    private String createAt;
+    private String updateAt;
+    
     public long getTeacherId() {
         return teacherId;
     }
@@ -16,5 +19,19 @@ public class TeacherAndOrder {
     public void setOrderId(String orderId) {
         this.orderId = orderId;
     }
+    public String getCreateAt() {
+        return createAt;
+    }
+    public void setCreateAt(String createAt) {
+        this.createAt = createAt;
+    }
+    public String getUpdateAt() {
+        return updateAt;
+    }
+    public void setUpdateAt(String updateAt) {
+        this.updateAt = updateAt;
+    }
+    
+    
     
 }

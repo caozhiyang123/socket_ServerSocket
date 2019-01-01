@@ -29,6 +29,7 @@ public class OrderDao
     private static final String MESSAGE_RESOURCE = "message_resource";
     private static final String CREATE_AT = "create_at";
     private static final String UPDATE_AT = "update_at";
+    private static final String UPDATED = "updated";
     
 
     public boolean addNewOrder(Order order)
@@ -78,10 +79,10 @@ public class OrderDao
         {
             conn = DBConnector.getInstance().getConnection();
             String sql = String.format("update %s set %s = ? ,%s = ?,%s = ?,%s = ?,%s = ?,%s = ?"
-                    + ",%s = ?,%s = ?,%s = ?,%s = ?,%s = ?,%s = ?,%s = ?,%s = ? where %s = ?"
+                    + ",%s = ?,%s = ?,%s = ?,%s = ?,%s = ?,%s = ?,%s = ?,%s = ?,%s = ? where %s = ?"
                     ,TBNAME,STUDENT_NAME,STUDENT_AGE,STUDENT_SEX,STUDENT_GRADE,STUDENT_SUBJECT
                     ,ADDRESS,OTHER_IMPORTANTS,COST,PARENTS_NAME,PHONE_NUM,QQ_NUM,WE_CHAT_NUM
-                    ,MESSAGE_RESOURCE,UPDATE_AT,ORDER_ID);
+                    ,MESSAGE_RESOURCE,UPDATE_AT,UPDATED,ORDER_ID);
             pst = conn.prepareStatement(sql);
             pst.setString(1, order.getStudentName());
             pst.setInt(2, order.getStudentAge());
@@ -97,7 +98,8 @@ public class OrderDao
             pst.setString(12, order.getWeChatNum());
             pst.setString(13, order.getMessageResource());
             pst.setString(14, order.getUpdateAt());
-            pst.setString(15, order.getOrderId());
+            pst.setInt(15, order.getUpdated());
+            pst.setString(16, order.getOrderId());
             return pst.executeUpdate() > 0;
         } catch (SQLException e)
         {
@@ -140,6 +142,7 @@ public class OrderDao
                 order.setCreateAt(rst.getString(CREATE_AT));
                 order.setUpdateAt(rst.getString(UPDATE_AT));
                 order.setMessageResource(rst.getString(MESSAGE_RESOURCE));
+                order.setUpdated(rst.getInt(UPDATED));
             }
             return order;
         }catch(SQLException e){

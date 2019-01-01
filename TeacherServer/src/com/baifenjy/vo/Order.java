@@ -39,13 +39,18 @@ public class Order implements Serializable {
     
     private String updateAt;
     
+    private int updated;
+    
+    private String orderItem;
+    
     public Order()
     {
         super();
     }
     public Order(String orderId,String studentName, int studentAge, int studentSex, String studentGrade,
             String studentSubject, String address, String otherImportants, String cost, String parentsName,
-            String phoneNum, String qqNum, String weChatNum, String messageResource,String createAt,String updateAt) {
+            String phoneNum, String qqNum, String weChatNum, String messageResource,String createAt
+            ,String updateAt,int updated,String orderItem) {
         this.orderId = orderId;
         this.studentName = studentName;
         this.studentAge = studentAge;
@@ -62,6 +67,8 @@ public class Order implements Serializable {
         this.messageResource = messageResource;
         this.createAt = createAt;
         this.updateAt = updateAt;
+        this.updated = updated;
+        this.orderItem = orderItem;
     }
     
     public long getId() {
@@ -173,7 +180,29 @@ public class Order implements Serializable {
     {
         this.updateAt = updateAt;
     }
+    public int getUpdated() {
+        return updated;
+    }
+    public void setUpdated(int updated) {
+        this.updated = updated;
+    }
+    
+    public String getOrderItem() {
+        return orderItem;
+    }
+    public void setOrderItem(String orderItem) {
+        this.orderItem = orderItem;
+    }
+    @Override
+    public String toString() {
+        return "【上海百分家教】订单号 "+" + orderId "
+                + " 年级 " +studentGrade+" "+(studentSex==1?"男":(studentSex==2?"女":"未知"))
+                + " 辅导科目 "+studentSubject 
+                + " 时间及老师要求 "+otherImportants 
+                + " 费用 "+cost 
+                + " 地址"+address
+                + "(如想预约，可直接小窗我，非诚勿扰)";
+    }
     
     
-
 }

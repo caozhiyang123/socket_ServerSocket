@@ -10,15 +10,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.Socket;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
@@ -30,6 +27,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baifenjy.io.Request;
 import com.baifenjy.io.Response;
 import com.baifenjy.utils.Center;
+import com.baifenjy.vo.Order;
 import com.baifenjy.vo.Teacher;
 import com.mysql.jdbc.StringUtils;
 
@@ -162,6 +160,28 @@ public class OrderFrame extends JFrame {
         resource_Field.setBounds(148, 390, 192, 42);
         commit_panel.add(resource_Field);
         
+        final JLabel label_copyOrder = new JLabel();
+        label_copyOrder.setText("复制详情");
+        label_copyOrder.setBounds(76, 450, 66, 18);
+        commit_panel.add(label_copyOrder);
+        
+        final JTextArea copyOrder_Field = new JTextArea();
+        copyOrder_Field.setBounds(148, 430, 192, 62);
+        commit_panel.add(copyOrder_Field);
+        
+        final JLabel label_updated = new JLabel();
+        label_updated.setText("更新次数");
+        label_updated.setBounds(76, 500, 66, 18);
+        label_updated.setVisible(false);
+        label_updated.setEnabled(false);
+        commit_panel.add(label_updated);
+        
+        final JTextField updated_Field = new JTextField();
+        updated_Field.setBounds(148, 490, 192, 42);
+        updated_Field.setVisible(false);
+        updated_Field.setEnabled(false);
+        commit_panel.add(updated_Field);
+        
         // -- right up  ~ 72
         final JLabel label_update = new JLabel();
         label_update.setText("更新时间");
@@ -241,23 +261,22 @@ public class OrderFrame extends JFrame {
         
         addSaveOrUpdateButton(commit_panel, order_Field, name_Field, ageField, sexField, gradeField, phone_field,
                 resource_Field, subject_Field, address_Field, time_Field, costField, parentsName_field, qq_Field,
-                weChatNum_Field, create_Field, update_Field);
+                weChatNum_Field, create_Field, update_Field,copyOrder_Field,updated_Field);
         
         addQueryButton(commit_panel, create_Field, order_Field, name_Field, ageField, sexField, gradeField, phone_field,
                 resource_Field, update_Field, subject_Field, address_Field, time_Field, costField, parentsName_field,
-                qq_Field, weChatNum_Field);
+                qq_Field, weChatNum_Field,copyOrder_Field,updated_Field);
         
         addEmptyButton(commit_panel, create_Field, order_Field, name_Field, ageField, sexField, gradeField, phone_field,
                 resource_Field, update_Field, subject_Field, address_Field, time_Field, costField, parentsName_field,
-                qq_Field, weChatNum_Field);
+                qq_Field, weChatNum_Field,copyOrder_Field);
         
         
-        final JButton teacher_button = new JButton();
+        /*final JButton teacher_button = new JButton();
         teacher_button.setText("上门老师");
         teacher_button.setBounds(248, 440, 91, 40);
         commit_panel.add(teacher_button);
-        
-        resetWindoHightEvent(teacher_button);
+        resetWindoHightEvent(teacher_button);*/
         
         connect();
         createTecPanel();
@@ -276,7 +295,7 @@ public class OrderFrame extends JFrame {
             JTextField name_Field, JTextField ageField, JTextField sexField, JTextField gradeField,
             JTextField phone_field, JTextField resource_Field, JTextField update_Field, JTextField subject_Field,
             JTextField address_Field, JTextField time_Field, JTextField costField, JTextField parentsName_field,
-            JTextField qq_Field, JTextField weChatNum_Field)
+            JTextField qq_Field, JTextField weChatNum_Field,JTextArea copyOrder_Field)
     {
         final JButton empty_button = new JButton();
         empty_button.setText("清空");
@@ -304,7 +323,7 @@ public class OrderFrame extends JFrame {
                 resource_Field.setText("");
                 create_Field.setText("");
                 update_Field.setText("");
-                
+                copyOrder_Field.setText("");
             }
         });
     }
@@ -315,7 +334,7 @@ public class OrderFrame extends JFrame {
             final JTextField gradeField, final JTextField phone_field, final JTextField resource_Field,
             final JTextField update_Field, final JTextField subject_Field, final JTextField address_Field,
             final JTextField time_Field, final JTextField costField, final JTextField parentsName_field,
-            final JTextField qq_Field, final JTextField weChatNum_Field)
+            final JTextField qq_Field, final JTextField weChatNum_Field,final JTextArea copyOrder_Field,JTextField updated_Field)
     {
         final JButton query_button = new JButton();
         query_button.setText("订单查询");
@@ -330,35 +349,37 @@ public class OrderFrame extends JFrame {
                 try
                 {
                     orderDos.writeUTF(Request.QUERY_ORDER);
+                    /*if( orderDis.available()==0){
+                        javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "服务器已断开,请稍后尝试");
+                        return;
+                    }*/
                     String response = orderDis.readUTF();
                     if (response.equals(Request.QUERY_ORDER)) {
                         String orderId = order_Field.getText();
                         orderDos.writeUTF(orderId);
-                        try {
-                            orderId = orderDis.readUTF();
-                        } catch (Exception e2) {
-                            e.paramString();
-                            javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "查无此订单"+orderId);
-                            emptyOrderInput(order_Field, name_Field, ageField, sexField, gradeField,
-                                    phone_field, resource_Field, subject_Field, address_Field, time_Field,
-                                    costField, parentsName_field, qq_Field, weChatNum_Field,create_Field,update_Field);
+                        String orderStr = orderDis.readUTF();
+                        JSONObject jsonObj = (JSONObject) JSON.parse(orderStr);
+                        if(jsonObj ==null){
+                            javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "查无此订单:"+orderId);
                             return;
                         }
-                        String studentName = orderDis.readUTF();
-                        String studentAge = orderDis.readUTF();
-                        String studentSex = orderDis.readUTF();
-                        String studentGrade = orderDis.readUTF();
-                        String studentSubject = orderDis.readUTF();
-                        String address = orderDis.readUTF();
-                        String time = orderDis.readUTF();
-                        String cost = orderDis.readUTF();
-                        String parentsName = orderDis.readUTF();
-                        String qqNum = orderDis.readUTF();
-                        String weChatNum = orderDis.readUTF();
-                        String phoneNum = orderDis.readUTF();
-                        String messageResource = orderDis.readUTF();
-                        String createAt = orderDis.readUTF();
-                        String updateAt = orderDis.readUTF();
+                        String studentName = jsonObj.getString("studentName");
+                        String studentAge = jsonObj.getIntValue("studentAge")+"";
+                        String studentSex = jsonObj.getIntValue("studentSex")==1?"男":(jsonObj.getIntValue("studentSex")==2?"女":"未知");
+                        String studentGrade = jsonObj.getString("studentGrade");
+                        String studentSubject = jsonObj.getString("studentSubject");
+                        String address = jsonObj.getString("address");
+                        String time = jsonObj.getString("otherImportants");//时间要求
+                        String cost = jsonObj.getString("cost");
+                        String parentsName = jsonObj.getString("parentsName");
+                        String qqNum = jsonObj.getString("qqNum");
+                        String weChatNum = jsonObj.getString("weChatNum");
+                        String phoneNum = jsonObj.getString("phoneNum");
+                        String messageResource = jsonObj.getString("messageResource");
+                        String createAt = jsonObj.getString("createAt");
+                        String updateAt = jsonObj.getString("updateAt");
+                        String orderItem =  jsonObj.getString("orderItem");
+                        String updated = jsonObj.getIntValue("updated")+"";
                         
                         order_Field.setText(orderId);
                         name_Field.setText(studentName);
@@ -376,11 +397,15 @@ public class OrderFrame extends JFrame {
                         resource_Field.setText(messageResource);
                         create_Field.setText(createAt);
                         update_Field.setText(updateAt);
+                        copyOrder_Field.setText(orderItem);
+                        updated_Field.setText(updated);
                         
                     }
                 } catch (IOException e1)
                 {
                     e1.printStackTrace();
+                    javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "服务器端异常,请处关闭重试");
+                    
                 }
             }
         });
@@ -392,12 +417,13 @@ public class OrderFrame extends JFrame {
             final JTextField gradeField, final JTextField phone_field, final JTextField resource_Field,
             final JTextField subject_Field, final JTextField address_Field, final JTextField time_Field,
             final JTextField costField, final JTextField parentsName_field, final JTextField qq_Field,
-            final JTextField weChatNum_Field,JTextField create_Field,JTextField update_Field)
+            final JTextField weChatNum_Field,JTextField create_Field,JTextField update_Field
+            ,JTextArea copyOrder_Field,JTextField updated_Field)
     {
         // --
         final JButton commit_button = new JButton();
         commit_button.setText("保存/修改");
-        commit_button.setBounds(148, 440, 91, 40);
+        commit_button.setBounds(340, 440, 91, 40);
         commit_panel.add(commit_button);
         
         commit_button.addActionListener(new ActionListener()
@@ -419,6 +445,7 @@ public class OrderFrame extends JFrame {
                 String weChatNum = new String(weChatNum_Field.getText()).trim();
                 String phoneNum = new String(phone_field.getText()).trim();
                 String messageResource = new String(resource_Field.getText()).trim();
+                String updated = updated_Field.getText();
                 
                 boolean flag = false;
                 if(orderId.trim().equals("")){
@@ -452,27 +479,30 @@ public class OrderFrame extends JFrame {
                         orderDos.writeUTF(Request.COMMIT_ORDER);
                         String res = orderDis.readUTF();
                         if (Request.COMMIT_ORDER.equals(res)) {
-                            orderDos.writeUTF(orderId);
-                            orderDos.writeUTF(studentName);
-                            orderDos.writeUTF(studentAge);
-                            orderDos.writeUTF(studentSex);
-                            orderDos.writeUTF(studentGrade);
-                            orderDos.writeUTF(studentSubject);
-                            orderDos.writeUTF(address);
-                            orderDos.writeUTF(time);
-                            orderDos.writeUTF(cost);
-                            orderDos.writeUTF(parentsName);
-                            orderDos.writeUTF(qqNum);
-                            orderDos.writeUTF(weChatNum);
-                            orderDos.writeUTF(phoneNum);
-                            orderDos.writeUTF(messageResource);
+                            Order order = new Order();
+                            order.setOrderId(orderId.trim());
+                            order.setStudentName(studentName.trim());
+                            order.setStudentAge(StringUtils.isNullOrEmpty(studentAge.trim())?0:Integer.parseInt(studentAge.trim()));
+                            order.setStudentSex(StringUtils.isNullOrEmpty(studentSex)?3:("男".equals(studentSex.trim())?1:("女".equals(studentSex.trim())?2:3)));
+                            order.setStudentGrade(studentGrade.trim());
+                            order.setStudentSubject(studentSubject);
+                            order.setAddress(address);
+                            order.setOtherImportants(time);
+                            order.setCost(cost);
+                            order.setParentsName(parentsName);
+                            order.setQqNum(qqNum);
+                            order.setWeChatNum(weChatNum);
+                            order.setPhoneNum(phoneNum);
+                            order.setMessageResource(messageResource);
+                            order.setUpdated(Integer.parseInt(updated));
+                            orderDos.writeUTF(JSON.toJSONString(order));
                             res = orderDis.readUTF();
                             if(Response.SUCCESS.equals(res)){
                                 javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "提交成功");
                                 
                                 emptyOrderInput(order_Field, name_Field, ageField, sexField, gradeField,
                                         phone_field, resource_Field, subject_Field, address_Field, time_Field,
-                                        costField, parentsName_field, qq_Field, weChatNum_Field, create_Field, update_Field);
+                                        costField, parentsName_field, qq_Field, weChatNum_Field, create_Field, update_Field,copyOrder_Field);
                             }else{
                                 javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "提交失败");
                             }
@@ -914,7 +944,7 @@ public class OrderFrame extends JFrame {
                         field_tec_id.setText(teacher.getId()+"");
                         field_tec_name.setText(teacher.getName());
                         field_tec_age.setText(teacher.getAge()+"");
-                        field_tec_sex.setText(teacher.getSex()==1?"男":(teacher.getSex()==0?"女":"未知"));
+                        field_tec_sex.setText(teacher.getSex()==1?"男":(teacher.getSex()==2?"女":"未知"));
                         field_tec_email.setText(teacher.getEmail());
                         field_tec_phone.setText(teacher.getPhoneNum());
                         field_tec_qq.setText(teacher.getQqNum());
@@ -987,39 +1017,7 @@ public class OrderFrame extends JFrame {
                     String res = teacherDis.readUTF();
                     if(Request.BOUND_ORDER.equals(res)){
                         boundOrRleaseOrder(orderId_field, tecId_field, orderId, teacherId);
-                        /*
-                        boolean flag = false;
-                        if(StringUtils.isNullOrEmpty(orderId.trim())){
-                            javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "订单号必须填写...");
-                            flag = true;
-                            return;
-                        }
-                        if(flag == false && StringUtils.isNullOrEmpty(teacherId.trim())){
-                            javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "老师编号必须填写...");
-                            flag = true;
-                            return;
-                        }else if(flag == false && !StringUtils.isNullOrEmpty(teacherId.trim())){
-                            try {
-                                Integer.parseInt(teacherId.trim());
-                            } catch (NumberFormatException e1) {
-                                e1.printStackTrace();
-                                javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "请正确填写老师编号...");
-                                flag = true;
-                                return;
-                            }
-                        }
-                        teacherDos.writeUTF(orderId);
-                        teacherDos.writeUTF(teacherId);
-                        res = teacherDis.readUTF();
-                        if(Response.SUCCESS.equals(res)){
-                            javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "绑定成功");
-                            orderId_field.setText("");
-                            tecId_field.setText("");
-                        }else{
-                            javax.swing.JOptionPane.showMessageDialog(OrderFrame.this, "绑定失败");
-                        }
-                        
-                    */}
+                    }
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
@@ -1216,7 +1214,7 @@ public class OrderFrame extends JFrame {
             final JTextField subject_Field, final JTextField address_Field,
             final JTextField time_Field, final JTextField costField,
             final JTextField parentsName_field, final JTextField qq_Field,
-            final JTextField weChatNum_Field,JTextField create_Field,JTextField update_Field) {
+            final JTextField weChatNum_Field,JTextField create_Field,JTextField update_Field,JTextArea copyOrder_Field) {
         order_Field.setText("");
         name_Field.setText("");
         ageField.setText("");
@@ -1233,6 +1231,7 @@ public class OrderFrame extends JFrame {
         resource_Field.setText("");
         create_Field.setText("");
         update_Field.setText("");
+        copyOrder_Field.setText("");
     }
 
 }

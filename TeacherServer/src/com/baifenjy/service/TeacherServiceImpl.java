@@ -5,9 +5,11 @@ import java.util.Date;
 import java.util.List;
 
 import com.baifenjy.dao.DaoFactory;
+import com.baifenjy.dao.OrderDao;
 import com.baifenjy.dao.TeacherAndOrderDao;
 import com.baifenjy.dao.TeacherDao;
 import com.baifenjy.utils.ThreadLocalSimple;
+import com.baifenjy.vo.Order;
 import com.baifenjy.vo.Teacher;
 import com.baifenjy.vo.TeacherAndOrder;
 import com.mysql.jdbc.StringUtils;
@@ -15,7 +17,8 @@ import com.mysql.jdbc.StringUtils;
 public class TeacherServiceImpl implements TeacherService
 {
     private TeacherDao teacherDao = DaoFactory.getTeacherDao();
-    TeacherAndOrderDao teacherAndOrderDao = DaoFactory.getTeacherAndOrderDao();
+    private TeacherAndOrderDao teacherAndOrderDao = DaoFactory.getTeacherAndOrderDao();
+    private OrderDao orderDao = DaoFactory.getOrderDao();
     
     @Override
     public boolean saveOrUpdate(Teacher teacher){
@@ -90,6 +93,46 @@ public class TeacherServiceImpl implements TeacherService
     @Override
     public boolean boundOrder(String orderId, String teacherId) {
         TeacherAndOrder teacherAndOrder = new TeacherAndOrder();
+        boolean falg = verifyParameters(orderId, teacherId, teacherAndOrder);
+        if(!falg){
+            return falg;
+        }
+        if(queryByOrderIdAndTeacherId(teacherAndOrder)==null){
+            //save
+            return save(teacherAndOrder);
+        }else{
+            //update
+            return update(teacherAndOrder);
+        }
+    }
+    
+    @Override
+    public TeacherAndOrder queryByOrderIdAndTeacherId(TeacherAndOrder teacherAndOrder){
+        TeacherAndOrder teacherAndOrderOld = teacherAndOrderDao.queryByOrderIdAndTeacherId(teacherAndOrder);
+        return teacherAndOrderOld; 
+    }
+    
+    @Override
+    public boolean save( TeacherAndOrder teacherAndOrder){
+        String time = ThreadLocalSimple.df.get().format(new Date());
+        teacherAndOrder.setCreateAt(time);
+        teacherAndOrder.setUpdateAt(time);
+        return teacherAndOrderDao.boundOrder(teacherAndOrder);
+    }
+    
+    @Override
+    public boolean update(TeacherAndOrder teacherAndOrder){
+        String time = ThreadLocalSimple.df.get().format(new Date());
+        teacherAndOrder.setUpdateAt(time);
+        return teacherAndOrderDao.updateByOrderIdAndTeacherId(teacherAndOrder);
+    }
+
+    private boolean verifyParameters(String orderId, String teacherId, TeacherAndOrder teacherAndOrder) {
+        //verify the specifical order is exsited or not
+        Order order = orderDao.queryByOrderId(orderId);
+        if(order == null){
+            return false;
+        }
         teacherAndOrder.setOrderId(orderId);
         if(StringUtils.isNullOrEmpty(teacherId.trim())){
             return false;
@@ -101,27 +144,22 @@ public class TeacherServiceImpl implements TeacherService
             e.printStackTrace();
             return false;
         }
+        //verify the specifical teacher is exsited or not
+        Teacher teacher = teacherDao.queryById(teacherID);
+        if(teacher == null){
+            return  false;
+        }
         teacherAndOrder.setTeacherId(teacherID);
-        teacherAndOrder.setTeacherId(teacherID);
-        return teacherAndOrderDao.boundOrder(teacherAndOrder);
+        return true;
     }
     
     @Override
     public boolean releaseOrder(String orderId, String teacherId){
         TeacherAndOrder teacherAndOrder = new TeacherAndOrder();
-        teacherAndOrder.setOrderId(orderId);
-        if(StringUtils.isNullOrEmpty(teacherId.trim())){
-            return false;
+        boolean flag =  verifyParameters(orderId, teacherId, teacherAndOrder);
+        if(!flag){
+            return flag;
         }
-        long teacherID = 0;
-        try {
-            teacherID = Long.parseLong(teacherId.trim());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-        teacherAndOrder.setTeacherId(teacherID);
-        teacherAndOrder.setTeacherId(teacherID);
         return teacherAndOrderDao.releaseOrder(teacherAndOrder);
     }
 }

@@ -37,6 +37,7 @@ CREATE TABLE `order_edu` (
   `student_subject` varchar(20) DEFAULT NULL,
   `we_chat_num` varchar(100) DEFAULT NULL,
   `update_at` varchar(50) NOT NULL,
+  `updated` int(20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `order_id` (`order_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;

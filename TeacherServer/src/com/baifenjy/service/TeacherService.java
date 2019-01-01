@@ -3,6 +3,7 @@ package com.baifenjy.service;
 import java.util.List;
 
 import com.baifenjy.vo.Teacher;
+import com.baifenjy.vo.TeacherAndOrder;
 
 public interface TeacherService
 {
@@ -19,5 +20,11 @@ public interface TeacherService
     boolean boundOrder(String orderId, String teacherId);
 
     boolean releaseOrder(String orderId, String teacherId);
+
+    boolean update(TeacherAndOrder teacherAndOrder);
+
+    boolean save(TeacherAndOrder teacherAndOrder);
+
+    TeacherAndOrder queryByOrderIdAndTeacherId(TeacherAndOrder teacherAndOrder);
 
 }

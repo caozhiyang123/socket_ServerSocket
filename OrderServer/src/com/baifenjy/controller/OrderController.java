@@ -4,18 +4,17 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
-import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
-import com.baifenjy.core.Application;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baifenjy.io.Request;
 import com.baifenjy.io.Response;
 import com.baifenjy.server.Server;
 import com.baifenjy.service.OrderServiceImpl;
 import com.baifenjy.vo.Order;
-import com.baifenjy.vo.User;
 
 public class OrderController
 {
@@ -83,27 +82,29 @@ public class OrderController
                     response = request;
                     dos.writeUTF(response);
                     if (request.equals(Request.COMMIT_ORDER)) {
-                        
-                        String orderId = dis.readUTF();
-                        String studentName = dis.readUTF();
-                        String studentAge = dis.readUTF();
-                        String studentSex = dis.readUTF();
-                        String studentGrade = dis.readUTF();
-                        String studentSubject = dis.readUTF();
-                        String address = dis.readUTF();
-                        String otherImportants = dis.readUTF();
-                        String cost = dis.readUTF();
-                        String parentsName = dis.readUTF();
-                        String qqNum = dis.readUTF();
-                        String weChatNum = dis.readUTF();
-                        String phoneNum = dis.readUTF();
-                        String messageResource = dis.readUTF();
+                        String orderStr = dis.readUTF();
+                        JSONObject jsonObj = (JSONObject) JSON.parse(orderStr);
+                        String orderId = jsonObj.getString("orderId");
+                        String studentName = jsonObj.getString("studentName");
+                        int studentAge = jsonObj.getIntValue("studentAge");
+                        int studentSex = jsonObj.getIntValue("studentSex");
+                        String studentGrade = jsonObj.getString("studentGrade");
+                        String studentSubject =  jsonObj.getString("studentSubject");
+                        String address = jsonObj.getString("address");
+                        String otherImportants = jsonObj.getString("otherImportants");
+                        String cost = jsonObj.getString("cost");
+                        String parentsName = jsonObj.getString("parentsName");
+                        String qqNum = jsonObj.getString("qqNum");
+                        String weChatNum = jsonObj.getString("weChatNum");
+                        String phoneNum = jsonObj.getString("phoneNum");
+                        String messageResource = jsonObj.getString("messageResource");
+                        int updated =  jsonObj.getIntValue("updated");
 
                         Order order = new Order();
                         order.setOrderId(orderId);
                         order.setStudentName(studentName);
-                        order.setStudentAge(Integer.parseInt(studentAge));
-                        order.setStudentSex("男".equals(studentSex)?1:("女".equals(studentSex)?0:3));
+                        order.setStudentAge(studentAge);
+                        order.setStudentSex(studentSex);
                         order.setStudentGrade(studentGrade);
                         order.setStudentSubject(studentSubject);
                         order.setAddress(address);
@@ -114,6 +115,7 @@ public class OrderController
                         order.setWeChatNum(weChatNum);
                         order.setPhoneNum(phoneNum);
                         order.setMessageResource(messageResource);
+                        order.setUpdated(updated);
 
                         boolean saveFlag = orderService.saveOrUpdate(order);
                         if (saveFlag) {
@@ -125,22 +127,7 @@ public class OrderController
                     } else if (request.equals(Request.QUERY_ORDER)) {
                         String orderId = dis.readUTF();
                         Order order = orderService.queryByOrderId(orderId);
-                        dos.writeUTF(order.getOrderId());
-                        dos.writeUTF(order.getStudentName()== null?"":order.getStudentName());
-                        dos.writeUTF(order.getStudentAge()+"");
-                        dos.writeUTF(order.getStudentSex()==1?"男":(order.getStudentSex()==0?"女":"未知"));
-                        dos.writeUTF(order.getStudentGrade()== null?"":order.getStudentGrade());
-                        dos.writeUTF(order.getStudentSubject()== null?"":order.getStudentSubject());
-                        dos.writeUTF(order.getAddress() == null?"":order.getAddress());
-                        dos.writeUTF(order.getOtherImportants() == null?"":order.getOtherImportants());
-                        dos.writeUTF(order.getCost()== null?"":order.getCost());
-                        dos.writeUTF(order.getParentsName()== null?"":order.getParentsName());
-                        dos.writeUTF(order.getQqNum()== null?"":order.getQqNum());
-                        dos.writeUTF(order.getWeChatNum()== null?"":order.getWeChatNum());
-                        dos.writeUTF(order.getPhoneNum()== null?"":order.getPhoneNum());
-                        dos.writeUTF(order.getMessageResource()== null?"":order.getMessageResource());
-                        dos.writeUTF(order.getCreateAt()== null?"":order.getCreateAt());
-                        dos.writeUTF(order.getUpdateAt()== null?"":order.getUpdateAt());
+                        dos.writeUTF(JSON.toJSONString(order));
                     }
                 }
             } catch (SocketException e) {
