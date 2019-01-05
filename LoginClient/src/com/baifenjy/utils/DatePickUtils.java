@@ -15,7 +15,7 @@ import com.baifenjy.utils.ThreadLocalSimple;
 import com.eltima.components.ui.DatePicker;
 
 public class DatePickUtils {
-   /* public static void main(String[] args) {
+    public static void main(String[] args) {/*
 
         JFrame f = new JFrame("LoL");
         f.setSize(400, 300);
@@ -43,7 +43,7 @@ public class DatePickUtils {
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         f.setVisible(true);
-    }*/
+    */}
 
     public static DatePicker getDatePicker() {
         final DatePicker datepick;
