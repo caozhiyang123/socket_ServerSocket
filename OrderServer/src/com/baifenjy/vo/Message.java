@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.util.Vector;
 
 public class Message implements Serializable{
+    
     private static final long serialVersionUID = 1L;
+    
     private int currentPage;
     private int pageSize = 30;
     private int rowCount;
@@ -59,5 +61,5 @@ public class Message implements Serializable{
     public void setColumnName(Vector<String> columnName) {
         this.columnName = columnName;
     }
-
+    
 }

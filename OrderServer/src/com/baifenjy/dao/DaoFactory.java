@@ -6,4 +6,5 @@ public class DaoFactory
     public static OrderDao getOrderDao(){ return new OrderDao();}
     public static TeacherDao getTeacherDao(){ return new TeacherDao();}
     public static TeacherAndOrderDao getTeacherAndOrderDao(){ return new TeacherAndOrderDao();}
+    public static MessageDao getMessageDao(){return new MessageDao();}
 }

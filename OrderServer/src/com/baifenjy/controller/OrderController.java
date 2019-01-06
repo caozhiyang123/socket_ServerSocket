@@ -13,15 +13,23 @@ import com.alibaba.fastjson.JSONObject;
 import com.baifenjy.io.Request;
 import com.baifenjy.io.Response;
 import com.baifenjy.server.Server;
+import com.baifenjy.service.MessageServiceImpl;
 import com.baifenjy.service.OrderServiceImpl;
+import com.baifenjy.vo.Message;
+import com.baifenjy.vo.MessageVO;
 import com.baifenjy.vo.Order;
 
 public class OrderController
 {
-    private static  OrderServiceImpl orderService;
+    private static  ThreadLocal<OrderServiceImpl> orderServiceLocal = new ThreadLocal<OrderServiceImpl>();
     static{
-        orderService = new OrderServiceImpl();
+        orderServiceLocal.set(new OrderServiceImpl());
     }
+    private static ThreadLocal<MessageServiceImpl> messageServiceLocal = new ThreadLocal<MessageServiceImpl>();
+    static{
+        messageServiceLocal.set(new MessageServiceImpl());
+    }
+    
     boolean started = false;
     ServerSocket ss = null;
     Socket s = null;
@@ -81,7 +89,7 @@ public class OrderController
                     request = dis.readUTF();
                     response = request;
                     dos.writeUTF(response);
-                    if (request.equals(Request.COMMIT_ORDER)) {
+                    if (Request.COMMIT_ORDER.equals(request)) {
                         String orderStr = dis.readUTF();
                         JSONObject jsonObj = (JSONObject) JSON.parse(orderStr);
                         String orderId = jsonObj.getString("orderId");
@@ -117,17 +125,50 @@ public class OrderController
                         order.setMessageResource(messageResource);
                         order.setUpdated(updated);
 
-                        boolean saveFlag = orderService.saveOrUpdate(order);
+                        boolean saveFlag = orderServiceLocal.get().saveOrUpdate(order);
                         if (saveFlag) {
                             dos.writeUTF(Response.SUCCESS);
                         }else {
                             dos.writeUTF(Response.FAIL);
                         }
 
-                    } else if (request.equals(Request.QUERY_ORDER)) {
+                    } else if (Request.QUERY_ORDER.equals(request)) {
                         String orderId = dis.readUTF();
-                        Order order = orderService.queryByOrderId(orderId);
+                        Order order = orderServiceLocal.get().queryByOrderId(orderId);
                         dos.writeUTF(JSON.toJSONString(order));
+                    }
+                    
+                    if(Request.PAGE_QUERY_MESSAGE.equals(request)){
+                        String messStr = dis.readUTF();
+                        JSONObject messObj = (JSONObject) JSON.parse(messStr);
+                        int currentPage = Integer.parseInt(messObj.get("currentPage").toString());
+                        int pageSize =  Integer.parseInt(messObj.get("pageSize").toString());
+                        //page begin from 0 in client
+                        Message message =  messageServiceLocal.get().pageQuery(currentPage+1,pageSize);
+                        messStr = JSON.toJSONString(message);
+                        dos.writeUTF(messStr);
+                    }else if(Request.UPDATE_MESSAGE.equals(request)){
+                        String messStr = dis.readUTF();
+                        JSONObject messObj = (JSONObject) JSON.parse(messStr);
+                        MessageVO messageVO = new MessageVO();
+                        messageVO.setId(messObj.getLongValue("id"));
+                        messageVO.setName(messObj.getString("name"));
+                        messageVO.setMessage(messObj.getString("message"));
+                        messageVO.setCallMessage(messObj.getString("callMessage"));
+                        messageVO.setTime(messObj.getString("time"));
+                        boolean flag = messageServiceLocal.get().updateMessageById(messageVO);
+                        dos.writeUTF(flag?Response.SUCCESS:Response.FAIL);
+                    }
+                    if(Request.SAVE_MESSAGE.equals(request)){
+                        String messStr = dis.readUTF();
+                        JSONObject messObj = (JSONObject) JSON.parse(messStr);
+                        MessageVO messageVO = new MessageVO();
+                        messageVO.setName(messObj.getString("name"));
+                        messageVO.setMessage(messObj.getString("message"));
+                        messageVO.setCallMessage(messObj.getString("callMessage"));
+                        messageVO.setTime(messObj.getString("time"));
+                        boolean flag = messageServiceLocal.get().saveMessage(messageVO);
+                        dos.writeUTF(flag?Response.SUCCESS:Response.FAIL);
                     }
                 }
             } catch (SocketException e) {

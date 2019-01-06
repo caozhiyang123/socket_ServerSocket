@@ -11,7 +11,7 @@ public class Request
     public static final String RELEASE_ORDER = "release_Order";
     public static final String SAVE_MESSAGE = "save_message";
     public static final String UPDATE_MESSAGE = "update_message";
-    public static final String PAGE_QUERY_MESSAGE = "page_query_MESSAGE";
+    public static final String PAGE_QUERY_MESSAGE = "page_query_message";
     
     
 }
