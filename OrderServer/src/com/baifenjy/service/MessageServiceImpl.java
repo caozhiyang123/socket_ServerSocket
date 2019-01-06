@@ -1,17 +1,17 @@
 package com.baifenjy.service;
 
-import java.util.Vector;
-
 import com.baifenjy.dao.DaoFactory;
 import com.baifenjy.dao.MessageDao;
 import com.baifenjy.vo.Message;
 import com.baifenjy.vo.MessageVO;
 
 public class MessageServiceImpl implements MessageService {
-    private static ThreadLocal<MessageDao> messageDaoLocal = new ThreadLocal<MessageDao>();
-    static{
-        messageDaoLocal.set(DaoFactory.getMessageDao());
-    }
+    private static ThreadLocal<MessageDao> messageDaoLocal = new ThreadLocal<MessageDao>(){
+        @Override
+        protected MessageDao initialValue() {
+            return DaoFactory.getMessageDao();
+        };
+    };
     
     @Override
     public Message pageQuery(int currentPage, int pageSize) {

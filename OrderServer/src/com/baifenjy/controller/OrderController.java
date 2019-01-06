@@ -21,14 +21,20 @@ import com.baifenjy.vo.Order;
 
 public class OrderController
 {
-    private static  ThreadLocal<OrderServiceImpl> orderServiceLocal = new ThreadLocal<OrderServiceImpl>();
-    static{
-        orderServiceLocal.set(new OrderServiceImpl());
-    }
-    private static ThreadLocal<MessageServiceImpl> messageServiceLocal = new ThreadLocal<MessageServiceImpl>();
-    static{
-        messageServiceLocal.set(new MessageServiceImpl());
-    }
+    private static  ThreadLocal<OrderServiceImpl> orderServiceLocal = new ThreadLocal<OrderServiceImpl>(){
+        @Override
+        protected OrderServiceImpl initialValue() {
+            return  new OrderServiceImpl();
+        };
+    };
+    
+    private static final ThreadLocal<MessageServiceImpl> messageServiceLocal = new ThreadLocal<MessageServiceImpl>(){
+        @Override
+        protected MessageServiceImpl initialValue() {
+            return new MessageServiceImpl();
+            
+        };
+    };
     
     boolean started = false;
     ServerSocket ss = null;

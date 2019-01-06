@@ -209,13 +209,17 @@ public class ManagerFrame extends JFrame{
     private void createSaveFrame() {
         message_frame_title = "保存留言";
         createFrame();
+        id_text_field.setText("");
+        name_field.setText("");
+        message_area.setText("");
+        call_area.setText("");
     }
 
-    private DatePicker datePicker;
-    private JTextField name_field;
-    private JTextField id_text_field;
-    private JTextArea message_area;
-    private JTextArea call_area;
+    private DatePicker datePicker = DatePickUtils.getDatePicker();
+    private JTextField name_field  = new JTextField();
+    private JTextField id_text_field = new JTextField();
+    private JTextArea message_area = new JTextArea();
+    private JTextArea call_area = new JTextArea();
     
     private String message_frame_title ;
     
@@ -226,12 +230,12 @@ public class ManagerFrame extends JFrame{
         addNewMessageFrame.setResizable(false);
         addNewMessageFrame.setBounds(400,50,650,700);
         addNewMessageFrame.setVisible(true);
-        addNewMessageFrame.setAlwaysOnTop(true);
+//        addNewMessageFrame.setAlwaysOnTop(true);
 //        addNewMessageFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //dispose();
         JScrollPane newMessageScrollPanel = new JScrollPane();
         //设置水平滚动条不显示
-        newMessageScrollPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        newMessageScrollPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         //设置垂直滚动条一直显示
         newMessageScrollPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         newMessageScrollPanel.getVerticalScrollBar().setUnitIncrement(20);
@@ -247,7 +251,7 @@ public class ManagerFrame extends JFrame{
         time_label.setBounds(10,10,70,35);
         newMessagePanel.add(time_label);
         
-        datePicker = DatePickUtils.getDatePicker();
+        
         datePicker.setBounds(80, 10, 200, 35);
         newMessagePanel.add(datePicker);
         
@@ -256,11 +260,9 @@ public class ManagerFrame extends JFrame{
         name_label.setBounds(10, 50, 70, 35);
         newMessagePanel.add(name_label);
         
-        name_field = new JTextField();
         name_field.setBounds(80, 50, 200, 35);
         newMessagePanel.add(name_field);
         
-        id_text_field = new JTextField();
         id_text_field.setBounds(285, 50, 200, 35);
         id_text_field.setEnabled(false);
         id_text_field.setVisible(false);
@@ -275,7 +277,6 @@ public class ManagerFrame extends JFrame{
         message_button.setEnabled(false);
         newMessagePanel.add(message_button);
         
-        message_area = new JTextArea();
         message_area.setBounds(10, 115, 600, 280);
         newMessagePanel.add(message_area);
         
@@ -284,7 +285,6 @@ public class ManagerFrame extends JFrame{
         call_label.setBounds(10, 405, 600, 20);
         newMessagePanel.add(call_label);
         
-        call_area = new JTextArea();
         call_area.setBounds(10, 425, 600, 280);
         newMessagePanel.add(call_area);
         
@@ -293,14 +293,15 @@ public class ManagerFrame extends JFrame{
         save_button.setBounds(250, 715, 80, 30);
         newMessagePanel.add(save_button);
         save_button.addActionListener(new ActionListener() {
-            Date date = (Date) datePicker.getValue();
-            String time = ThreadLocalSimple.df.get().format(date);
-            String name = name_field.getText();
-            String id  = id_text_field.getText();
-            String message = message_area.getText();
-            String callMessage = call_area.getText();
             @Override
             public void actionPerformed(ActionEvent e) {
+                Date date = (Date) datePicker.getValue();
+                String time = ThreadLocalSimple.df.get().format(date);
+                String name = name_field.getText();
+                String id  = id_text_field.getText();
+                String message = message_area.getText();
+                String callMessage = call_area.getText();
+                System.out.println(time+","+name+","+message);
                 boolean flag = false;
                 if(StringUtils.isNullOrEmpty(time.trim())){
                     javax.swing.JOptionPane.showMessageDialog(ManagerFrame.this, "日期必须填写");
@@ -317,7 +318,7 @@ public class ManagerFrame extends JFrame{
                     flag = true;
                     return;
                 }
-                
+                addNewMessageFrame.dispose();
                 if(!flag){
                     try {
                         if(!StringUtils.isNullOrEmpty(id.trim())){
@@ -363,7 +364,8 @@ public class ManagerFrame extends JFrame{
                 }
             }
             private void requeryData() throws IOException {
-                queryDataFromServer(rowData, columnName,0,pageCount);
+                rowData.removeAllElements();
+                queryDataFromServer(rowData, columnName,0);
                 jt.validate();
                 jt.updateUI();
                 String desc   =  DESC_LABEL_TEXT.replaceAll("currentPage", Integer.toString(currentPage+1));// beging from 0
@@ -467,7 +469,8 @@ public class ManagerFrame extends JFrame{
         //query rowData and columnName from server
         rowData = new Vector();
         columnName = new Vector();
-        for(int i=0;i<30;i++){
+        /*构造数据 test
+         * for(int i=0;i<30;i++){
             Vector rows = new Vector();
             for (int j = 0; j < 5; j++) {
                 rows.add((currentPage+1)+" page data "+i+" "+j);
@@ -476,11 +479,12 @@ public class ManagerFrame extends JFrame{
         }
         for (int i = 0; i < 5; i++) {
             columnName.add("column name "+i);
-        }
+        }*/
         //TODO query data from server
         //initial table data from page 0
         try {
-            queryDataFromServer(rowData, columnName,0,pageCount);
+            queryDataFromServer(rowData, columnName,0);
+            System.out.println(pageCount+"总页数");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -508,6 +512,8 @@ public class ManagerFrame extends JFrame{
         
         defaultTableModel = new DefaultTableModel(rowData,columnName);
         jt = new JTable(defaultTableModel);
+        jt.validate();
+        jt.updateUI();
         createViewTabel(panel);
         
         
@@ -623,6 +629,7 @@ public class ManagerFrame extends JFrame{
         desc = desc.replaceAll("pageCount", Integer.toString(pageCount));
         page_des_label.setText(desc);
         panel.add(page_des_label);
+        
     }
 
     private void createLastPageButton(final JPanel panel, JButton first_page_button, JButton pre_page_button,
@@ -642,7 +649,7 @@ public class ManagerFrame extends JFrame{
                 //query first page data from server
                 // TODO
                 try {
-                    queryDataFromServer(rowData,columnName,currentPage,pageCount);
+                    queryDataFromServer(rowData,columnName,currentPage);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
@@ -685,7 +692,7 @@ public class ManagerFrame extends JFrame{
                 //query first page data from server
                 // TODO
                 try {
-                    queryDataFromServer(rowData,columnName,currentPage,pageCount);
+                    queryDataFromServer(rowData,columnName,currentPage);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
@@ -730,7 +737,7 @@ public class ManagerFrame extends JFrame{
                 //query first page data from server
                 // TODO
                 try {
-                    queryDataFromServer(rowData,columnName,currentPage,pageCount);
+                    queryDataFromServer(rowData,columnName,currentPage);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
@@ -769,7 +776,7 @@ public class ManagerFrame extends JFrame{
                 //query first page data from server
                 // TODO
                 try {
-                    queryDataFromServer(rowData,columnName,currentPage,pageCount);
+                    queryDataFromServer(rowData,columnName,currentPage);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
@@ -829,7 +836,7 @@ public class ManagerFrame extends JFrame{
         call_area.setText(rows.get(3));
     }
 
-    private void queryDataFromServer(Vector rowData, Vector columnName,int currentPage, int pageCount) throws IOException {
+    private void queryDataFromServer(Vector rowData, Vector columnName,int currentPage) throws IOException {
         messageDos.writeUTF(Request.PAGE_QUERY_MESSAGE);
         String response = messageDis.readUTF();
         if(Request.PAGE_QUERY_MESSAGE.equals(response)){
@@ -840,15 +847,11 @@ public class ManagerFrame extends JFrame{
             String mess = messageDis.readUTF();
             JSONObject jsonObj = (JSONObject) JSON.parse(mess);
             JSONArray rowDatas = (JSONArray) jsonObj.get("rowData");
-            for (Object obj : rowDatas) {
+            for (Object rowDataObj : rowDatas) {
                 Vector rowLineData = new Vector();
-                JSONArray rowDataArr = (JSONArray)obj;
-                for (Object objLine : rowDataArr) {
-                    JSONObject jsonLine = (JSONObject)objLine;
-                    rowLineData.add(jsonLine.get("time").toString());
-                    rowLineData.add(jsonLine.get("name").toString());
-                    rowLineData.add(jsonLine.get("message").toString());
-                    rowLineData.add(jsonLine.get("callMessage").toString());
+                JSONArray jsonLine = (JSONArray)rowDataObj;
+                for (Object object : jsonLine) {
+                    rowLineData.add(object.toString());
                 }
                 rowData.add(rowLineData);
             }
@@ -856,9 +859,7 @@ public class ManagerFrame extends JFrame{
             for (Object obj : columnNameArr) {
                 columnName.add(obj.toString());
             }
-            pageCount = Integer.parseInt(jsonObj.get("pageCount").toString());
-            
-            
+            this.pageCount = Integer.parseInt(jsonObj.get("pageCount").toString());
         }
     }
 

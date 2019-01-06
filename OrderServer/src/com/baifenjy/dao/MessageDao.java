@@ -28,7 +28,7 @@ public class MessageDao {
         ResultSet rst = null;
         try {
             conn = DBConnector.getInstance().getConnection();
-            String sql = String.format("select * from %s limit ?,? order by %s desc", MESSAGE_TB,TIME);
+            String sql = String.format("select * from %s  order by %s desc limit ?,?", MESSAGE_TB,TIME);
             pst = conn.prepareStatement(sql);
             pst.setInt(1, beginIndex);
             pst.setInt(2, length);
@@ -68,11 +68,11 @@ public class MessageDao {
         ResultSet rst = null;
         try {
             conn = DBConnector.getInstance().getConnection();
-            String sql = String.format("select count(*) from %s");
+            String sql = String.format("select count(*) from %s",MESSAGE_TB);
             pst = conn.prepareStatement(sql);
             rst = pst.executeQuery();
             while(rst.next()){
-                rowCount = rst.getInt(0);
+                rowCount = rst.getInt(1);
             }
             return rowCount;
         }catch (SQLException e) {
