@@ -5,7 +5,7 @@ import com.baifenjy.vo.MessageVO;
 
 interface MessageService {
 
-    Message pageQuery(int currentPage, int pageSize);
+    Message pageQuery(int currentPage, int pageSize ,String name);
 
     boolean updateMessageById(MessageVO messageVO);
 

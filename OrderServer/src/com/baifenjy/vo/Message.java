@@ -13,6 +13,8 @@ public class Message implements Serializable{
     private int pageCount;
     private Vector rowData;
     private Vector<String> columnName;
+    
+    private MessageVO messageVO;
 
     public int getCurrentPage() {
         return currentPage;
@@ -60,6 +62,14 @@ public class Message implements Serializable{
 
     public void setColumnName(Vector<String> columnName) {
         this.columnName = columnName;
+    }
+
+    public MessageVO getMessageVO() {
+        return messageVO;
+    }
+
+    public void setMessageVO(MessageVO messageVO) {
+        this.messageVO = messageVO;
     }
     
 }

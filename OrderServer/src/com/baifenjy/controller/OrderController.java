@@ -18,6 +18,7 @@ import com.baifenjy.service.OrderServiceImpl;
 import com.baifenjy.vo.Message;
 import com.baifenjy.vo.MessageVO;
 import com.baifenjy.vo.Order;
+import com.mysql.jdbc.StringUtils;
 
 public class OrderController
 {
@@ -149,8 +150,14 @@ public class OrderController
                         JSONObject messObj = (JSONObject) JSON.parse(messStr);
                         int currentPage = Integer.parseInt(messObj.get("currentPage").toString());
                         int pageSize =  Integer.parseInt(messObj.get("pageSize").toString());
+                        Object messageObj = messObj.get("messageVO");
+                        String name = "";
+                        if(messageObj!= null){
+                            JSONObject messageVOObj = (JSONObject)messageObj;
+                            name = messageVOObj.get("name") ==null ?"":messageVOObj.get("name").toString();
+                        }
                         //page begin from 0 in client
-                        Message message =  messageServiceLocal.get().pageQuery(currentPage+1,pageSize);
+                        Message message =  messageServiceLocal.get().pageQuery(currentPage+1,pageSize,name);
                         messStr = JSON.toJSONString(message);
                         dos.writeUTF(messStr);
                     }else if(Request.UPDATE_MESSAGE.equals(request)){

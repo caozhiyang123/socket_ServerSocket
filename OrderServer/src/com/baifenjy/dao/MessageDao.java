@@ -128,4 +128,71 @@ public class MessageDao {
         return false;
     }
 
+    public Message pageQueryByName(int beginIndex, int length, String name) {
+        Message message = new Message();
+        Vector rowDatas = new Vector();
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet rst = null;
+        try {
+            conn = DBConnector.getInstance().getConnection();
+            String sql = String.format("select * from %s where %s like ? order by %s desc limit ?,?", MESSAGE_TB,NAME,TIME);
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, name+"%");
+            pst.setInt(2, beginIndex);
+            pst.setInt(3, length);
+            rst = pst.executeQuery();
+            while(rst.next()){
+                Vector rowData = new Vector();
+                rowData.add(rst.getLong(ID));
+                rowData.add(rst.getString(NAME));
+                rowData.add(rst.getString(MESSAGE));
+                rowData.add(rst.getString(CALL_MESSAGE));
+                rowData.add(rst.getString(TIME));
+                rowDatas.add(rowData);
+            }
+            message.setRowData(rowDatas);
+            
+            
+            Vector columnName = new Vector();
+            ResultSetMetaData metaData = rst.getMetaData();
+            for (int i = 1; i <= metaData.getColumnCount(); i++) {
+                columnName.add(metaData.getColumnName(i));//这里是列名
+            }
+            message.setColumnName(columnName);
+            return message;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally{
+            DBConnector.getInstance().release(conn, pst, rst);
+        }
+        
+        return message;
+    
+    }
+
+    public int queryRowCountByName(String name) {
+        int rowCount = 0;
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet rst = null;
+        try {
+            conn = DBConnector.getInstance().getConnection();
+            String sql = String.format("select count(*) from %s where %s like ?",MESSAGE_TB,NAME);
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, name+"%");
+            rst = pst.executeQuery();
+            while(rst.next()){
+                rowCount = rst.getInt(1);
+            }
+            return rowCount;
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }finally{
+            DBConnector.getInstance().release(conn, pst, rst);
+        }
+        return rowCount;
+    
+    }
+
 }

@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
@@ -402,35 +404,72 @@ public class ManagerFrame extends JFrame{
         secondPanel.add(name_label);
         
         JTextField name_text = new JTextField();
-        name_text.setBounds(50, 5, 80, 20);
+        name_text.setBounds(50, 5, 120, 20);
         name_text.setFont(new Font("宋体",Font.PLAIN,12));
         secondPanel.add(name_text);
+        name_text.addKeyListener(new KeyListener() {
+            
+            @Override
+            public void keyTyped(KeyEvent e) {
+                
+            }
+            
+            @Override
+            public void keyReleased(KeyEvent e) {
+                String name = name_text.getText();
+                currentPage = 0;
+                rowData.removeAllElements();
+                //query first page data from server
+                try {
+                    queryDataFromServerByName(rowData,columnName,currentPage,name.trim());
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                //refresh data to JTable
+                jt.validate();
+                jt.updateUI();
+                
+                String desc = DESC_LABEL_TEXT.replaceAll("currentPage", Integer.toString(currentPage+1));// beging from 0
+                desc = desc.replaceAll("pageCount", Integer.toString(pageCount));
+                page_des_label.setText(desc);
+                
+                changeButtonEnabled(first_page_button, pre_page_button, next_page_button, last_page_button);
+            }
+            
+            @Override
+            public void keyPressed(KeyEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+        });
         
         JLabel start_label = new JLabel("时间:");
-        start_label.setBounds(150, 5, 50, 20);
+        start_label.setBounds(190, 5, 50, 20);
         start_label.setFont(new Font("宋体",Font.PLAIN,12));
         secondPanel.add(start_label);
         
         DatePicker start_datePicker = DatePickUtils.getDatePicker();
-        start_datePicker.setBounds(190, 5, 200, 20);
+        start_datePicker.setBounds(230, 5, 200, 20);
         secondPanel.add(start_datePicker);
         
         
         JLabel end_label = new JLabel("—");
-        end_label.setBounds(410, 5, 50, 20);
+        end_label.setBounds(465, 5, 50, 20);
         secondPanel.add(end_label);
         
         DatePicker end_datePicker = DatePickUtils.getDatePicker();
-        end_datePicker.setBounds(440, 5, 200, 20);
+        end_datePicker.setBounds(510, 5, 200, 20);
         secondPanel.add(end_datePicker);
         
         JButton query_button = new JButton("查询");
-        query_button.setBounds(660, 5, 100, 20);
+        query_button.setFont(new Font("宋体",Font.PLAIN,12));
+        query_button.setBounds(730, 5, 100, 20);
         secondPanel.add(query_button);
         query_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //分页查询
+                //模糊查询
+                String text = name_text.getText();
                 
             }
         });
@@ -512,6 +551,8 @@ public class ManagerFrame extends JFrame{
         
         defaultTableModel = new DefaultTableModel(rowData,columnName);
         jt = new JTable(defaultTableModel);
+        jt.setRowHeight(28);
+        jt.setFont(new Font("黑体",Font.BOLD,14));
         jt.validate();
         jt.updateUI();
         createViewTabel(panel);
@@ -836,6 +877,36 @@ public class ManagerFrame extends JFrame{
         call_area.setText(rows.get(3));
     }
 
+    private void queryDataFromServerByName(Vector rowData, Vector columnName,int currentPage,String name) throws IOException {
+        messageDos.writeUTF(Request.PAGE_QUERY_MESSAGE);
+        String response = messageDis.readUTF();
+        if(Request.PAGE_QUERY_MESSAGE.equals(response)){
+            Message message = new Message();
+            MessageVO messageVO = new MessageVO();
+            messageVO.setName(name);
+            message.setMessageVO(messageVO);
+            message.setCurrentPage(currentPage);
+            String messStr = JSON.toJSONString(message);
+            messageDos.writeUTF(messStr);
+            String mess = messageDis.readUTF();
+            JSONObject jsonObj = (JSONObject) JSON.parse(mess);
+            JSONArray rowDatas = (JSONArray) jsonObj.get("rowData");
+            for (Object rowDataObj : rowDatas) {
+                Vector rowLineData = new Vector();
+                JSONArray jsonLine = (JSONArray)rowDataObj;
+                for (Object object : jsonLine) {
+                    rowLineData.add(object.toString());
+                }
+                rowData.add(rowLineData);
+            }
+            JSONArray columnNameArr = (JSONArray) jsonObj.get("columnName");
+            for (Object obj : columnNameArr) {
+                columnName.add(obj.toString());
+            }
+            this.pageCount = Integer.parseInt(jsonObj.get("pageCount").toString());
+        }
+    }
+    
     private void queryDataFromServer(Vector rowData, Vector columnName,int currentPage) throws IOException {
         messageDos.writeUTF(Request.PAGE_QUERY_MESSAGE);
         String response = messageDis.readUTF();
