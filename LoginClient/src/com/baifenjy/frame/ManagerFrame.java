@@ -59,28 +59,11 @@ public class ManagerFrame extends JFrame{
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
             
-            java.awt.EventQueue.invokeLater(new Runnable()
-            {
-                
-                @Override
-                public void run()
-                {
-                    try
-                    {
-                        //UIManager.setLookAndFeel("org.jvnet.substance.skin.SubstanceBusinessLookAndFeel");
-                        //UIManager.setLookAndFeel("org.jvnet.substance.skin.SubstanceOfficeSilver2007LookAndFeel");
-                        //UIManager.setLookAndFeel("org.jvnet.substance.skin.SubstanceSaharaLookAndFeel");
-                        //UIManager.setLookAndFeel("org.jvnet.substance.skin.SubstanceOfficeBlue2007LookAndFeel");
-                        //UIManager.setLookAndFeel("org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel");
-                        //UIManager.setLookAndFeel(SubstanceLookAndFeel.SKIN_PROPERTY);
-                        
-                    } catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    } 
-                    
-                }
-            });
+          //UIManager.setLookAndFeel("org.jvnet.substance.skin.SubstanceBusinessLookAndFeel");
+            //UIManager.setLookAndFeel("org.jvnet.substance.skin.SubstanceOfficeSilver2007LookAndFeel");
+            //UIManager.setLookAndFeel("org.jvnet.substance.skin.SubstanceSaharaLookAndFeel");
+            //UIManager.setLookAndFeel("org.jvnet.substance.skin.SubstanceOfficeBlue2007LookAndFeel");
+            //UIManager.setLookAndFeel("org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel");
           
           new ManagerFrame();
         } catch (Exception e) {
