@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -31,6 +32,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
@@ -48,6 +50,14 @@ import com.mysql.jdbc.StringUtils;
 
 public class ManagerFrame extends JFrame{
     public static void main(String[] args) {
+        JFrame.setDefaultLookAndFeelDecorated(true);
+        JDialog.setDefaultLookAndFeelDecorated(true);
+
+        try {
+            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         new ManagerFrame();
   }
 
@@ -149,7 +159,7 @@ public class ManagerFrame extends JFrame{
         leftPanel.setLayout(null);
         leftPanel.setBorder(new TitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, null, null));
-        leftPanel.setBounds(200, 50, 1100, 948);
+        leftPanel.setBounds(200, 20, 1100, 948);
         leftPanel.setVisible(true);
         
         JPanel firstPanel = new JPanel();
@@ -171,7 +181,7 @@ public class ManagerFrame extends JFrame{
         firstPanel.setLayout(null);
         firstPanel.setBorder(new TitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, null, null));
-        firstPanel.setBounds(0, 0, 1100, 30);
+        firstPanel.setBounds(0, 0, 1100, 40);
         firstPanel.setVisible(true);
         
         JButton addNewMessageButton = new JButton("添加新留言");
@@ -186,7 +196,7 @@ public class ManagerFrame extends JFrame{
 
     private void createDeleteMessageButton(JButton deleteMessageButton) {
         deleteMessageButton.setFont(new Font("宋体",Font.PLAIN,12));
-        deleteMessageButton.setBounds(140, 5, 100, 20);
+        deleteMessageButton.setBounds(140, 5, 100, 30);
         deleteMessageButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -198,7 +208,7 @@ public class ManagerFrame extends JFrame{
 
     private void createAddNewMessageButton(JButton addNewMessageButton) {
         addNewMessageButton.setFont(new Font("宋体",Font.PLAIN,12));
-        addNewMessageButton.setBounds(10, 5, 100, 20);
+        addNewMessageButton.setBounds(10, 5, 100, 30);
         addNewMessageButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -395,16 +405,16 @@ public class ManagerFrame extends JFrame{
         secondPanel.setLayout(null);
         secondPanel.setBorder(new TitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, null, null));
-        secondPanel.setBounds(0, 30, 1100, 30);
+        secondPanel.setBounds(0, 40, 1100, 40);
         secondPanel.setVisible(true);
         
         JLabel name_label = new JLabel("姓名:");
-        name_label.setBounds(10, 5, 50, 20);
+        name_label.setBounds(10, 5, 50, 30);
         name_label.setFont(new Font("宋体",Font.PLAIN,12));
         secondPanel.add(name_label);
         
         JTextField name_text = new JTextField();
-        name_text.setBounds(50, 5, 120, 20);
+        name_text.setBounds(50, 5, 120, 30);
         name_text.setFont(new Font("宋体",Font.PLAIN,12));
         secondPanel.add(name_text);
         name_text.addKeyListener(new KeyListener() {
@@ -444,26 +454,26 @@ public class ManagerFrame extends JFrame{
         });
         
         JLabel start_label = new JLabel("时间:");
-        start_label.setBounds(190, 5, 50, 20);
+        start_label.setBounds(190, 5, 50, 30);
         start_label.setFont(new Font("宋体",Font.PLAIN,12));
         secondPanel.add(start_label);
         
         DatePicker start_datePicker = DatePickUtils.getDatePicker();
-        start_datePicker.setBounds(230, 5, 200, 20);
+        start_datePicker.setBounds(230, 5, 200, 30);
         secondPanel.add(start_datePicker);
         
         
         JLabel end_label = new JLabel("—");
-        end_label.setBounds(465, 5, 50, 20);
+        end_label.setBounds(465, 5, 50, 30);
         secondPanel.add(end_label);
         
         DatePicker end_datePicker = DatePickUtils.getDatePicker();
-        end_datePicker.setBounds(510, 5, 200, 20);
+        end_datePicker.setBounds(510, 5, 200, 30);
         secondPanel.add(end_datePicker);
         
         JButton query_button = new JButton("查询");
         query_button.setFont(new Font("宋体",Font.PLAIN,12));
-        query_button.setBounds(730, 5, 100, 20);
+        query_button.setBounds(730, 5, 100, 30);
         secondPanel.add(query_button);
         query_button.addActionListener(new ActionListener() {
             @Override
@@ -502,7 +512,7 @@ public class ManagerFrame extends JFrame{
         thirdPanel.setLayout(null);
         thirdPanel.setBorder(new TitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, null, null));
-        thirdPanel.setBounds(0, 60, 1100, 900);
+        thirdPanel.setBounds(0, 80, 1100, 900);
         thirdPanel.setVisible(true);
         
         //query rowData and columnName from server
