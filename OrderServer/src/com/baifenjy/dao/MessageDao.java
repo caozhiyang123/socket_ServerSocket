@@ -138,7 +138,7 @@ public class MessageDao {
             conn = DBConnector.getInstance().getConnection();
             String sql = String.format("select * from %s where %s like ? order by %s desc limit ?,?", MESSAGE_TB,NAME,TIME);
             pst = conn.prepareStatement(sql);
-            pst.setString(1, name+"%");
+            pst.setString(1, "%" + name + "%");
             pst.setInt(2, beginIndex);
             pst.setInt(3, length);
             rst = pst.executeQuery();
@@ -180,7 +180,7 @@ public class MessageDao {
             conn = DBConnector.getInstance().getConnection();
             String sql = String.format("select count(*) from %s where %s like ?",MESSAGE_TB,NAME);
             pst = conn.prepareStatement(sql);
-            pst.setString(1, name+"%");
+            pst.setString(1, "%" + name + "%");
             rst = pst.executeQuery();
             while(rst.next()){
                 rowCount = rst.getInt(1);

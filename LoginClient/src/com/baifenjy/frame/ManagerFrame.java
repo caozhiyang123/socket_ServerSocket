@@ -7,8 +7,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.DataInputStream;
@@ -16,6 +20,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.nio.channels.Selector;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -512,7 +517,7 @@ public class ManagerFrame extends JFrame{
         thirdPanel.setLayout(null);
         thirdPanel.setBorder(new TitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, null, null));
-        thirdPanel.setBounds(0, 80, 1100, 900);
+        thirdPanel.setBounds(0, 80, 1100, 940);
         thirdPanel.setVisible(true);
         
         //query rowData and columnName from server
@@ -561,10 +566,18 @@ public class ManagerFrame extends JFrame{
         
         defaultTableModel = new DefaultTableModel(rowData,columnName);
         jt = new JTable(defaultTableModel);
+        jt.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        jt.getColumnModel().getColumn(0).setPreferredWidth(10);
+        jt.getColumnModel().getColumn(1).setPreferredWidth(80);
+        jt.getColumnModel().getColumn(2).setPreferredWidth(250);
+        jt.getColumnModel().getColumn(3).setPreferredWidth(200);
+        jt.getColumnModel().getColumn(4).setPreferredWidth(50);
         jt.setRowHeight(28);
-        jt.setFont(new Font("黑体",Font.BOLD,14));
+        jt.setFont(new Font("黑体",Font.PLAIN,14));
         jt.validate();
         jt.updateUI();
+        jt.setShowGrid(true);
+        jt.setGridColor(Color.lightGray);
         createViewTabel(panel);
         
         
@@ -598,7 +611,7 @@ public class ManagerFrame extends JFrame{
     private void createColumnName(final JPanel panel) {
         //column name
         JTextField id_text_field = new JTextField("序号");
-        id_text_field.setBounds(20, 10, 200, 20);
+        id_text_field.setBounds(18, 10, 110, 20);
         id_text_field.setEnabled(false);
         id_text_field.setBorder(null);
         id_text_field.setBackground(Color.GRAY);
@@ -606,7 +619,7 @@ public class ManagerFrame extends JFrame{
         panel.add(id_text_field);
         
         JTextField name_text_field = new JTextField("姓名");
-        name_text_field.setBounds(220, 10, 200, 20);
+        name_text_field.setBounds(115, 10, 163, 20);
         name_text_field.setEnabled(false);
         name_text_field.setBorder(null);
         name_text_field.setBackground(Color.GRAY);
@@ -614,7 +627,7 @@ public class ManagerFrame extends JFrame{
         panel.add(name_text_field);
         
         JTextField message_text_field = new JTextField("留言");
-        message_text_field.setBounds(420, 10, 200, 20);
+        message_text_field.setBounds(270, 10, 320, 20);
         message_text_field.setEnabled(false);
         message_text_field.setBorder(null);
         message_text_field.setBackground(Color.GRAY);
@@ -622,7 +635,7 @@ public class ManagerFrame extends JFrame{
         panel.add(message_text_field);
         
         JTextField call_text_field = new JTextField("回复留言");
-        call_text_field.setBounds(620, 10, 200, 20);
+        call_text_field.setBounds(580, 10, 320, 20);
         call_text_field.setEnabled(false);
         call_text_field.setBorder(null);
         call_text_field.setBackground(Color.GRAY);
@@ -630,7 +643,7 @@ public class ManagerFrame extends JFrame{
         panel.add(call_text_field);
         
         JTextField time_text_field = new JTextField("时间");
-        time_text_field.setBounds(820, 10, 200, 20);
+        time_text_field.setBounds(850, 10, 200, 20);
         time_text_field.setEnabled(false);
         time_text_field.setBorder(null);
         time_text_field.setBackground(Color.GRAY);
@@ -640,10 +653,9 @@ public class ManagerFrame extends JFrame{
 
     private void createViewTabel(final JPanel panel) {
         jt.setBounds(20, 30, 1000, 600);
-        jt.setFont(new Font("宋体",Font.PLAIN,12));
         panel.add(jt);
         
-        jt.addMouseListener(new MouseListener() {
+        jt.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {}
             
@@ -658,17 +670,18 @@ public class ManagerFrame extends JFrame{
             
             @Override
             public void mouseClicked(MouseEvent e) {
-                int rowIndex = jt.getSelectedRow();
-                int[] selectedColumnIndexs = {0,1,2,3,4};
-                List<String> rows = new ArrayList<String>();
-                for (int columnIndex : selectedColumnIndexs) {
-                    rows.add(jt.getValueAt(rowIndex == -1?0:rowIndex, columnIndex == -1?0:columnIndex).toString());
+                jt.setEnabled(false);
+                if(e.getClickCount() == 2){
+                    int rowIndex = jt.getSelectedRow();
+                    int[] selectedColumnIndexs = {0,1,2,3,4};
+                    List<String> rows = new ArrayList<String>();
+                    for (int columnIndex : selectedColumnIndexs) {
+                        rows.add(jt.getValueAt(rowIndex == -1?0:rowIndex, columnIndex == -1?0:columnIndex).toString());
+                    }
+                    //弹出编辑窗口
+                    createEditFrame(rows);
+                    jt.setEnabled(true);
                 }
-                
-//                javax.swing.JOptionPane.showMessageDialog(ManagerFrame.this, rows.toString());
-                
-                //弹出编辑窗口
-                createEditFrame(rows);
             }
         });
     }
