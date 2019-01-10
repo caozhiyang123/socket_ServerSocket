@@ -9,10 +9,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.DataInputStream;
@@ -20,7 +16,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.Socket;
-import java.nio.channels.Selector;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -54,6 +49,7 @@ import com.eltima.components.ui.DatePicker;
 import com.mysql.jdbc.StringUtils;
 
 public class ManagerFrame extends JFrame{
+    private static ManagerFrame managerFrame = null;
     public static void main(String[] args) {
         JFrame.setDefaultLookAndFeelDecorated(true);
         JDialog.setDefaultLookAndFeelDecorated(true);
@@ -63,14 +59,13 @@ public class ManagerFrame extends JFrame{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        new ManagerFrame();
+        managerFrame = new ManagerFrame();
   }
 
   private  ManagerFrame() {
       this.setTitle("管理系统_v2.0_上海力霆教育科技有限公司_[www.baifenjy.com]");
       this.setFont(new Font("宋体",Font.PLAIN,12));
       this.setBounds(300, 200,1000, 800);
-      this.setVisible(true);
       this.addWindowListener(new WindowAdapter() {
           @Override
           public void windowClosing(WindowEvent e) {
@@ -79,7 +74,8 @@ public class ManagerFrame extends JFrame{
               System.exit(0);
           }
       });
-      
+      //设置组件透明度
+      this.setVisible(true);
       final JScrollPane jScrollPane = new JScrollPane();
       //设置水平滚动条不显示
       jScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -225,7 +221,12 @@ public class ManagerFrame extends JFrame{
     
     private void createSaveFrame() {
         message_frame_title = "保存留言";
-        createFrame();
+        if(newSaveFrameCount == 0){
+            newSaveFrameCount++;
+            createFrame();
+        }else if(newSaveFrameCount >= 1){
+            return;
+        }
         id_text_field.setText("");
         name_field.setText("");
         message_area.setText("");
@@ -240,15 +241,27 @@ public class ManagerFrame extends JFrame{
     
     private String message_frame_title ;
     
-    private void createFrame() {
+    private byte newSaveFrameCount = 0;
+    private byte newEditFrameCount = 0;
+    
+    private  void createFrame() {
+        //设置底层窗口模糊
         //创建一个JFrame窗口
         JFrame addNewMessageFrame = new JFrame(message_frame_title);
         addNewMessageFrame.setFont(new Font("宋体",Font.PLAIN,12));
         addNewMessageFrame.setResizable(false);
         addNewMessageFrame.setBounds(400,50,650,700);
+        addNewMessageFrame.setAlwaysOnTop(true);
+        addNewMessageFrame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                newEditFrameCount = 0;
+                newSaveFrameCount = 0;
+                jt.setEnabled(true);
+                //
+            }
+        });
         addNewMessageFrame.setVisible(true);
-//        addNewMessageFrame.setAlwaysOnTop(true);
-//        addNewMessageFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //dispose();
         JScrollPane newMessageScrollPanel = new JScrollPane();
         //设置水平滚动条不显示
@@ -657,16 +670,23 @@ public class ManagerFrame extends JFrame{
         
         jt.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(MouseEvent e) {}
+            public void mouseReleased(MouseEvent e) {
+            }
             
             @Override
-            public void mousePressed(MouseEvent e) {}
+            public void mousePressed(MouseEvent e) {
+                
+            }
             
             @Override
-            public void mouseExited(MouseEvent e) {}
+            public void mouseExited(MouseEvent e) {
+                
+            }
             
             @Override
-            public void mouseEntered(MouseEvent e) {}
+            public void mouseEntered(MouseEvent e) {
+                
+            }
             
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -680,7 +700,7 @@ public class ManagerFrame extends JFrame{
                     }
                     //弹出编辑窗口
                     createEditFrame(rows);
-                    jt.setEnabled(true);
+                    
                 }
             }
         });
@@ -892,8 +912,13 @@ public class ManagerFrame extends JFrame{
     }
 
     protected void createEditFrame(List<String> rows) {
+        if(newEditFrameCount == 0){
+            newEditFrameCount++;
+            createFrame();
+        }else if(newEditFrameCount >= 1){
+            return;
+        }
         message_frame_title = "编辑留言";
-        createFrame();
         id_text_field.setText(rows.get(0));
         name_field.setText(rows.get(1));
         message_area.setText(rows.get(2));
