@@ -931,6 +931,7 @@ public class ManagerFrame extends JFrame{
     }
 
     protected void createEditFrame(List<String> rows) {
+        message_frame_title = "编辑留言";
         if(newEditFrameCount == 0){
             newEditFrameCount++;
             if(isSaveFrameOpen){
@@ -940,7 +941,6 @@ public class ManagerFrame extends JFrame{
         }else if(newEditFrameCount >= 1){
             return;
         }
-        message_frame_title = "编辑留言";
         id_text_field.setText(rows.get(0));
         name_field.setText(rows.get(1));
         message_area.setText(rows.get(2));
