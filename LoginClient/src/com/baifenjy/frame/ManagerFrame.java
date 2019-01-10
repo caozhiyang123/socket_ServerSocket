@@ -16,6 +16,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -258,7 +259,12 @@ public class ManagerFrame extends JFrame{
                 newEditFrameCount = 0;
                 newSaveFrameCount = 0;
                 jt.setEnabled(true);
-                //
+            }
+            @Override
+            public void windowClosed(WindowEvent e) {
+                newEditFrameCount = 0;
+                newSaveFrameCount = 0;
+                jt.setEnabled(true);
             }
         });
         addNewMessageFrame.setVisible(true);
@@ -583,8 +589,8 @@ public class ManagerFrame extends JFrame{
         jt.getColumnModel().getColumn(0).setPreferredWidth(10);
         jt.getColumnModel().getColumn(1).setPreferredWidth(80);
         jt.getColumnModel().getColumn(2).setPreferredWidth(250);
-        jt.getColumnModel().getColumn(3).setPreferredWidth(200);
-        jt.getColumnModel().getColumn(4).setPreferredWidth(50);
+        jt.getColumnModel().getColumn(3).setPreferredWidth(150);
+        jt.getColumnModel().getColumn(4).setPreferredWidth(100);
         jt.setRowHeight(28);
         jt.setFont(new Font("黑体",Font.PLAIN,14));
         jt.validate();
@@ -640,7 +646,7 @@ public class ManagerFrame extends JFrame{
         panel.add(name_text_field);
         
         JTextField message_text_field = new JTextField("留言");
-        message_text_field.setBounds(270, 10, 320, 20);
+        message_text_field.setBounds(270, 10, 340, 20);
         message_text_field.setEnabled(false);
         message_text_field.setBorder(null);
         message_text_field.setBackground(Color.GRAY);
@@ -648,7 +654,7 @@ public class ManagerFrame extends JFrame{
         panel.add(message_text_field);
         
         JTextField call_text_field = new JTextField("回复留言");
-        call_text_field.setBounds(580, 10, 320, 20);
+        call_text_field.setBounds(600, 10, 240, 20);
         call_text_field.setEnabled(false);
         call_text_field.setBorder(null);
         call_text_field.setBackground(Color.GRAY);
@@ -656,7 +662,7 @@ public class ManagerFrame extends JFrame{
         panel.add(call_text_field);
         
         JTextField time_text_field = new JTextField("时间");
-        time_text_field.setBounds(850, 10, 200, 20);
+        time_text_field.setBounds(830, 10, 190, 20);
         time_text_field.setEnabled(false);
         time_text_field.setBorder(null);
         time_text_field.setBackground(Color.GRAY);
