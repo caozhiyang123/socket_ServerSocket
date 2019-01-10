@@ -89,14 +89,13 @@ public class MessageDao {
         ResultSet rst = null;
         try {
             conn = DBConnector.getInstance().getConnection();
-            String sql = String.format("update %s set %s=?,%s=?,%s=?,%s=? where %s = ?", 
-                    MESSAGE_TB,NAME,MESSAGE,CALL_MESSAGE,TIME,ID);
+            String sql = String.format("update %s set %s=?,%s=?,%s=? where %s = ?", 
+                    MESSAGE_TB,NAME,MESSAGE,CALL_MESSAGE,ID);
             pst = conn.prepareStatement(sql);
             pst.setString(1, messageVO.getName());
             pst.setString(2, messageVO.getMessage());
             pst.setString(3, messageVO.getCallMessage());
-            pst.setString(4, messageVO.getTime());
-            pst.setLong(5, messageVO.getId());
+            pst.setLong(4, messageVO.getId());
             return pst.executeUpdate() >0 ? true:false;
         }catch (SQLException e) {
             e.printStackTrace();
