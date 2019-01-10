@@ -215,12 +215,14 @@ public class ManagerFrame extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 createSaveFrame();
+//                jt.setVisible(false);
             }
             
         });
     }
     
     private void createSaveFrame() {
+        isSaveFrameOpen = true;
         message_frame_title = "保存留言";
         if(newSaveFrameCount == 0){
             newSaveFrameCount++;
@@ -245,8 +247,9 @@ public class ManagerFrame extends JFrame{
     private byte newSaveFrameCount = 0;
     private byte newEditFrameCount = 0;
     
+    private boolean isSaveFrameOpen;
+    
     private  void createFrame() {
-        //设置底层窗口模糊
         //创建一个JFrame窗口
         JFrame addNewMessageFrame = new JFrame(message_frame_title);
         addNewMessageFrame.setFont(new Font("宋体",Font.PLAIN,12));
@@ -259,14 +262,21 @@ public class ManagerFrame extends JFrame{
                 newEditFrameCount = 0;
                 newSaveFrameCount = 0;
                 jt.setEnabled(true);
+//                jt.setVisible(true);
+                isSaveFrameOpen = false;
             }
             @Override
             public void windowClosed(WindowEvent e) {
                 newEditFrameCount = 0;
                 newSaveFrameCount = 0;
                 jt.setEnabled(true);
+//                jt.setVisible(true);
+                isSaveFrameOpen = false;
             }
         });
+//        addNewMessageFrame.setUndecorated(true);
+//        addNewMessageFrame.setOpacity(0.9f);
+//        addNewMessageFrame.setBackground(new Color(0,0,0));
         addNewMessageFrame.setVisible(true);
         //dispose();
         JScrollPane newMessageScrollPanel = new JScrollPane();
@@ -297,6 +307,7 @@ public class ManagerFrame extends JFrame{
         newMessagePanel.add(name_label);
         
         name_field.setBounds(80, 50, 200, 35);
+        name_field.setFont(new Font("宋体",Font.PLAIN,12));
         newMessagePanel.add(name_field);
         
         id_text_field.setBounds(285, 50, 200, 35);
@@ -314,6 +325,7 @@ public class ManagerFrame extends JFrame{
         newMessagePanel.add(message_button);
         
         message_area.setBounds(10, 115, 600, 280);
+        message_area.setFont(new Font("宋体",Font.PLAIN,13));
         newMessagePanel.add(message_area);
         
         JLabel call_label = new JLabel("回复内容:",SwingConstants.LEFT);
@@ -322,6 +334,7 @@ public class ManagerFrame extends JFrame{
         newMessagePanel.add(call_label);
         
         call_area.setBounds(10, 425, 600, 280);
+        call_area.setFont(new Font("宋体",Font.PLAIN,14));
         newMessagePanel.add(call_area);
         
         JButton save_button = new JButton("保存");
@@ -920,6 +933,9 @@ public class ManagerFrame extends JFrame{
     protected void createEditFrame(List<String> rows) {
         if(newEditFrameCount == 0){
             newEditFrameCount++;
+            if(isSaveFrameOpen){
+                return;
+            }
             createFrame();
         }else if(newEditFrameCount >= 1){
             return;
