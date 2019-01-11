@@ -37,6 +37,7 @@ import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 import javax.swing.plaf.basic.BasicBorders.ButtonBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.undo.UndoManager;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -50,7 +51,7 @@ import com.baifenjy.vo.MessageVO;
 import com.eltima.components.ui.DatePicker;
 import com.mysql.jdbc.StringUtils;
 
-public class ManagerFrame extends JFrame{
+public class ManagerFrame extends JFrame implements ActionListener{
     private static ManagerFrame managerFrame = null;
     public static void main(String[] args) {
         JFrame.setDefaultLookAndFeelDecorated(true);
@@ -283,10 +284,11 @@ public class ManagerFrame extends JFrame{
         //dispose();
         JScrollPane newMessageScrollPanel = new JScrollPane();
         //设置水平滚动条不显示
-        newMessageScrollPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        newMessageScrollPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         //设置垂直滚动条一直显示
         newMessageScrollPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         newMessageScrollPanel.getVerticalScrollBar().setUnitIncrement(20);
+        newMessageScrollPanel.setBorder(null);
         addNewMessageFrame.add(newMessageScrollPanel);
         
         JPanel newMessagePanel = new JPanel();
@@ -317,31 +319,48 @@ public class ManagerFrame extends JFrame{
         id_text_field.setVisible(false);
         newMessagePanel.add(id_text_field);
         
-        JButton message_button = new JButton(" 留言内容:");
-        message_button.setFont(new Font("宋体",Font.PLAIN,12));
-        message_button.setHorizontalAlignment(SwingConstants.LEFT);
-        message_button.setBounds(10, 95, 600, 20);
-        message_button.setBorder(null);
-        message_button.setBackground(Color.lightGray);
-        message_button.setEnabled(false);
-        newMessagePanel.add(message_button);
+        JLabel message_label = new JLabel(" 留言内容:");
+        message_label.setFont(new Font("宋体",Font.PLAIN,12));
+        message_label.setBounds(10, 95, 150, 20);
+        message_label.setBackground(Color.lightGray);
+        newMessagePanel.add(message_label);
         
-        message_area.setBounds(10, 115, 600, 280);
+        JScrollPane message_scroll_pane = new JScrollPane(message_area);
+        newMessagePanel.add(message_scroll_pane);
+        message_scroll_pane.setBounds(10, 115, 600, 200);
+        message_scroll_pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        //设置垂直滚动条一直显示
+        message_scroll_pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        message_scroll_pane.getVerticalScrollBar().setUnitIncrement(10);
+        message_area.setBounds(0, 0, 600, 180);
         message_area.setFont(new Font("宋体",Font.PLAIN,13));
-        newMessagePanel.add(message_area);
+        message_area.setLineWrap(true);
+        //add undoAction event
+        addUndoAction(new UndoManager(),message_area);
         
         JLabel call_label = new JLabel("回复内容:",SwingConstants.LEFT);
         call_label.setFont(new Font("宋体",Font.PLAIN,12));
-        call_label.setBounds(10, 405, 600, 20);
+        call_label.setBackground(Color.lightGray);
+        call_label.setBounds(10, 315, 150, 20);
         newMessagePanel.add(call_label);
         
-        call_area.setBounds(10, 425, 600, 280);
+        JScrollPane call_message_scroll_pane = new JScrollPane(call_area);
+        newMessagePanel.add(call_message_scroll_pane);
+        call_message_scroll_pane.setBounds(10, 335, 600, 200);
+        call_message_scroll_pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        //设置垂直滚动条一直显示
+        call_message_scroll_pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        call_message_scroll_pane.getVerticalScrollBar().setUnitIncrement(10);
+        call_area.setBounds(0, 0, 600, 180);
         call_area.setFont(new Font("宋体",Font.PLAIN,14));
-        newMessagePanel.add(call_area);
+        call_area.setLineWrap(true);
+        //add undoAction event
+        addUndoAction(new UndoManager(),call_area);
+    
         
         JButton save_button = new JButton("保存");
         save_button.setFont(new Font("宋体",Font.PLAIN,12));
-        save_button.setBounds(250, 715, 80, 30);
+        save_button.setBounds(250, 535, 80, 30);
         newMessagePanel.add(save_button);
         save_button.addActionListener(new ActionListener() {
             @Override
@@ -428,7 +447,7 @@ public class ManagerFrame extends JFrame{
         
         JButton cancel_button = new JButton("取消");
         cancel_button.setFont(new Font("宋体",Font.PLAIN,12));
-        cancel_button.setBounds(340, 715, 80, 30);
+        cancel_button.setBounds(340, 535, 80, 30);
         newMessagePanel.add(cancel_button);
         cancel_button.addActionListener(new ActionListener() {
             @Override
@@ -438,6 +457,32 @@ public class ManagerFrame extends JFrame{
             }
         });
         
+    }
+
+    private void addUndoAction(UndoManager undoManager,JTextArea area) {
+        area.getDocument().addUndoableEditListener(undoManager);
+        area.addKeyListener(new KeyListener() {
+
+                @Override
+                public void keyReleased(KeyEvent arg0) {
+                }
+                @Override
+                public void keyPressed(KeyEvent evt) {
+                        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_Z) {
+                                if (undoManager.canUndo()) {
+                                        undoManager.undo();
+                                }
+                        }
+                        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_Y) {
+                                if (undoManager.canRedo()) {
+                                        undoManager.redo();
+                                }
+                        }
+                }
+                @Override
+                public void keyTyped(KeyEvent arg0) {
+                }
+        });
     }
 
     private void createSecondPanel(JPanel secondPanel) {
@@ -1026,6 +1071,11 @@ public class ManagerFrame extends JFrame{
                 
             }
         });
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        
     }
 }
 
