@@ -35,6 +35,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
+import javax.swing.plaf.basic.BasicBorders.ButtonBorder;
 import javax.swing.table.DefaultTableModel;
 
 import com.alibaba.fastjson.JSON;
@@ -87,6 +88,7 @@ public class ManagerFrame extends JFrame{
       final JPanel panel = new JPanel();
       panel.setPreferredSize(new Dimension(1200,1000)); 
       panel.setLayout(null);
+      jScrollPane.setBorder(null);
       jScrollPane.setViewportView(panel);
       this.add(jScrollPane);
       this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -161,7 +163,7 @@ public class ManagerFrame extends JFrame{
         leftPanel.setLayout(null);
         leftPanel.setBorder(new TitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, null, null));
-        leftPanel.setBounds(200, 20, 1100, 948);
+        leftPanel.setBounds(200, 20, 1100, 975);
         leftPanel.setVisible(true);
         
         JPanel firstPanel = new JPanel();
@@ -255,7 +257,7 @@ public class ManagerFrame extends JFrame{
         addNewMessageFrame.setFont(new Font("宋体",Font.PLAIN,12));
         addNewMessageFrame.setResizable(false);
         addNewMessageFrame.setBounds(400,50,650,700);
-        addNewMessageFrame.setAlwaysOnTop(true);
+//        addNewMessageFrame.setAlwaysOnTop(true);
         addNewMessageFrame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -549,7 +551,7 @@ public class ManagerFrame extends JFrame{
         thirdPanel.setLayout(null);
         thirdPanel.setBorder(new TitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, null, null));
-        thirdPanel.setBounds(0, 80, 1100, 940);
+        thirdPanel.setBounds(0, 80, 1100, 898);
         thirdPanel.setVisible(true);
         
         //query rowData and columnName from server
@@ -590,7 +592,8 @@ public class ManagerFrame extends JFrame{
         panel.setPreferredSize(new Dimension(1200,1000)); 
         panel.setLayout(null);
         jsp.setViewportView(panel);
-        jsp.setBounds(40, 0, 1060, 900);
+        jsp.setBounds(30, 2, 1065, 891);
+        jsp.setBorder(null);
         thirdPanel.add(jsp);
         
         createColumnName(panel);
@@ -600,16 +603,16 @@ public class ManagerFrame extends JFrame{
         jt = new JTable(defaultTableModel);
         jt.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         jt.getColumnModel().getColumn(0).setPreferredWidth(10);
-        jt.getColumnModel().getColumn(1).setPreferredWidth(80);
-        jt.getColumnModel().getColumn(2).setPreferredWidth(250);
+        jt.getColumnModel().getColumn(1).setPreferredWidth(140);
+        jt.getColumnModel().getColumn(2).setPreferredWidth(190);
         jt.getColumnModel().getColumn(3).setPreferredWidth(150);
         jt.getColumnModel().getColumn(4).setPreferredWidth(100);
         jt.setRowHeight(28);
         jt.setFont(new Font("黑体",Font.PLAIN,14));
-        jt.validate();
-        jt.updateUI();
         jt.setShowGrid(true);
         jt.setGridColor(Color.lightGray);
+        jt.validate();
+        jt.updateUI();
         createViewTabel(panel);
         
         
@@ -694,7 +697,6 @@ public class ManagerFrame extends JFrame{
             
             @Override
             public void mousePressed(MouseEvent e) {
-                
             }
             
             @Override
