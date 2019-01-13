@@ -8,6 +8,7 @@ public class Server
     private static ServerSocket loginSos;
     private static ServerSocket orderSos;
     private static ServerSocket teaSos;
+    private static ServerSocket songSos;
     private static Server server;
     private Server(){}
     public static Server getInstance(){
@@ -19,6 +20,7 @@ public class Server
 //                   loginSos = new ServerSocket(8887);
                    orderSos = new ServerSocket(8888);
 //                   teaSos = new ServerSocket(8899);
+//                   songSos = new ServerSocket(8899);
                } catch (IOException e) {
                    e.printStackTrace();
                }
@@ -47,4 +49,12 @@ public class Server
     public ServerSocket getTeaServerSocket(){
         return teaSos;
     }
+    public  ServerSocket getSongSos() {
+        return songSos;
+    }
+    public  void setSongSos(ServerSocket songSos) {
+        Server.songSos = songSos;
+    }
+    
+    
 }

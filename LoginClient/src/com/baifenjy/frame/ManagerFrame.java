@@ -3,6 +3,8 @@ package com.baifenjy.frame;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -13,6 +15,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.Socket;
@@ -22,10 +25,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -42,6 +49,7 @@ import javax.swing.undo.UndoManager;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baifenjy.frame.mp3.MusicFrame;
 import com.baifenjy.io.Request;
 import com.baifenjy.io.Response;
 import com.baifenjy.utils.DatePickUtils;
@@ -77,14 +85,30 @@ public class ManagerFrame extends JFrame implements ActionListener{
               System.exit(0);
           }
       });
-      //设置组件透明度
       this.setVisible(true);
-      final JScrollPane jScrollPane = new JScrollPane();
-      //设置水平滚动条不显示
-      jScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-      //设置垂直滚动条一直显示
-      jScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-      jScrollPane.getVerticalScrollBar().setUnitIncrement(20);
+      //设置菜单
+      JMenuBar jMenuBar = new JMenuBar();
+      this.setJMenuBar(jMenuBar);
+      JMenu jMenu_enjoy = new JMenu("娱乐天地");
+      jMenu_enjoy.setFont(new Font("黑体",Font.PLAIN,14));
+      jMenuBar.add(jMenu_enjoy);
+      JMenuItem item_music = new JMenuItem("音乐欣赏");
+      jMenu_enjoy.add(item_music);
+      JMenuItem item_news = new JMenuItem("新闻早报");
+      jMenu_enjoy.add(item_news);
+      JMenuItem item_game = new JMenuItem("棋牌游戏");
+      jMenu_enjoy.add(item_game);
+      item_music.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            new MusicFrame();
+        }
+      });
+      
+      
+      //设置水平滚动条不显示,设置垂直滚动条一直显示
+      final JScrollPane jScrollPane = new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+      jScrollPane.getVerticalScrollBar().setUnitIncrement(30);
       //定义一个JPanel面板 以整合其他面板
       final JPanel panel = new JPanel();
       panel.setPreferredSize(new Dimension(1200,1000)); 
@@ -134,6 +158,7 @@ public class ManagerFrame extends JFrame implements ActionListener{
           e.printStackTrace();
       }
   }
+  
   public void disconnect() {
       try {
           if(messageDis != null){
@@ -736,24 +761,6 @@ public class ManagerFrame extends JFrame implements ActionListener{
         panel.add(jt);
         
         jt.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
-            
-            @Override
-            public void mousePressed(MouseEvent e) {
-            }
-            
-            @Override
-            public void mouseExited(MouseEvent e) {
-                
-            }
-            
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                
-            }
-            
             @Override
             public void mouseClicked(MouseEvent e) {
                 jt.setEnabled(false);

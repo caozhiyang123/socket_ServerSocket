@@ -14,5 +14,6 @@ public class Request
     public static final String PAGE_QUERY_MESSAGE = "page_query_message";
     public static final String QUERY_MESSAGE_BY_NAME = "query_message_by_name";
     
+    public static final String PAGE_QUERY_SONGS = "page_query_songs";
     
 }
