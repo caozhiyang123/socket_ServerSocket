@@ -144,7 +144,7 @@ public class MusicFrame extends JFrame{
     DataOutputStream messageDos;
     DataInputStream messageDis;
     private static final String IP = "127.0.0.1";
-    private static final int ORDER_PORT = 8888;
+    private static final int ORDER_PORT = 8899;
     
     public void connect() {
         try {
@@ -226,14 +226,16 @@ public class MusicFrame extends JFrame{
     
     private void stopDisplay(List<String> rows){
         songFlags.put(Long.parseLong(rows.get(0)),false);
-        MP3Player.getInstance().stopDisplay();
+        mp3Player.stopDisplay();
     }
     
     private Map<Long,Boolean> songFlags = new HashMap<Long,Boolean>();
+    private MP3Player mp3Player;
     
     private void disPlayMusic(List<String> rows) {
         songFlags.put(Long.parseLong(rows.get(0)),true);
-        MP3Player.getInstance().disPlaySong(rows.get(rows.size()-1),Long.parseLong(rows.get(0)));
+        mp3Player = new MP3Player(rows.get(rows.size()-1).toString());
+        mp3Player.start();
     }
 
     private void createColumnName(JPanel below_panel_in_my_fav_song) {
