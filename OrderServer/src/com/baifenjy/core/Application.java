@@ -25,8 +25,8 @@ public class Application
         
         configController = new ConfigController();
 //        loginServer = new LoginServer();
-//        orderServer = new OrderController();
+        orderServer = new OrderController();
 //        teacherServer = new TeacherController();
-        songController = new SongController();
+//        songController = new SongController();
     }
 }
