@@ -6,7 +6,7 @@ import java.util.Vector;
 public class Message implements Serializable{
     private static final long serialVersionUID = 1L;
     private int currentPage;
-    private int pageSize = 30;
+    private int pageSize = 20;
     private int rowCount;
     private int pageCount;
     private Vector rowData;
